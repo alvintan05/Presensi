@@ -6,20 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeActivity">
 
+    <View
+        android:id="@+id/view_backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@color/primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cv_geofence"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:id="@+id/cv_datang"
+        android:layout_width="136dp"
+        android:layout_height="136dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
+        app:cardCornerRadius="10dp"
         app:cardElevation="5dp"
-        app:cardCornerRadius="5dp"
-        app:layout_constraintEnd_toStartOf="@+id/cv_other"
+        app:layout_constraintBottom_toBottomOf="@+id/view_backdrop"
+        app:layout_constraintEnd_toStartOf="@+id/cv_pulang"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/view_backdrop">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -42,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="GEOFENCE"
+                android:text="DATANG"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="16sp"
@@ -56,18 +65,17 @@
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cv_other"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:id="@+id/cv_pulang"
+        android:layout_width="136dp"
+        android:layout_height="136dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="24dp"
-        app:cardElevation="5dp"
         app:cardCornerRadius="5dp"
+        app:cardElevation="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/cv_geofence"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toEndOf="@+id/cv_datang"
+        app:layout_constraintTop_toTopOf="@+id/cv_datang">
 
     </com.google.android.material.card.MaterialCardView>
 

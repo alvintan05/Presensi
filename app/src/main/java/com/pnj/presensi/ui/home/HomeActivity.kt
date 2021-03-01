@@ -15,9 +15,5 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        binding.cvGeofence.setOnClickListener {
-            startActivity(Intent(this@HomeActivity, MapsActivity::class.java))
-        }
     }
 }
