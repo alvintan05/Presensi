@@ -35,7 +35,7 @@ class HomeActivity : AppCompatActivity() {
         with(builder) {
             setTitle("Pilih Lokasi Kerja")
             setItems(items){ dialog, which ->
-                Toast.makeText(applicationContext, items[which] + " is clicked", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(applicationContext, items[which] + " is clicked", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this@HomeActivity, MapsActivity::class.java))
             }
             show()

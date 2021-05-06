@@ -10,7 +10,10 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -19,9 +22,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.SphericalUtil
 import com.pnj.presensi.databinding.ActivityMapsBinding
+import com.pnj.presensi.databinding.CustomAlertDialogBinding
 import pub.devrel.easypermissions.EasyPermissions
 
 
@@ -34,8 +37,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val TAG = "MapsActivity"
     private val RC_LOCATION_PERM = 123
-    //private val marker = LatLng(-6.371450, 106.824392) // pnj
-    private val marker = LatLng(-6.345355, 106.868694) //rumah
+    private val marker = LatLng(-6.371450, 106.824392) // pnj
+    //private val marker = LatLng(-6.345355, 106.868694) //rumah
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +64,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             // Have permission
             if (isLocationEnabled()) {
                 //if location enabled
-                mMap.isMyLocationEnabled = true
                 fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
                     val location = task.result
                     if (location == null) {
@@ -72,9 +74,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             } else {
                 //location not enabled open settings
-                Toast.makeText(this, "Please turn on" + " your location...", Toast.LENGTH_LONG)
-                    .show()
-                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                buildAlertMessageNoGps()
             }
         } else {
             // Ask for one permission
@@ -91,9 +91,39 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     // if location is enabled
     private fun isLocationEnabled(): Boolean {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-            LocationManager.NETWORK_PROVIDER
-        )
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    // Dialog to turn on location
+    private fun buildAlertMessageNoGps() {
+        val builder = AlertDialog.Builder(this).apply {
+            setMessage(getString(R.string.dialog_no_gps))
+            setCancelable(false)
+            setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }
+            setNegativeButton(getString(R.string.no)) { dialog, which ->
+                dialog.cancel()
+            }
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    private fun buildAlertMessage(message: String, status: Boolean) {
+        val binding = CustomAlertDialogBinding.inflate(LayoutInflater.from(this))
+        val builder = AlertDialog.Builder(this).apply {
+            setView(binding.root)
+        }
+        if (!status) {
+            binding.ivError.visibility = View.VISIBLE
+            binding.ivSuccess.visibility = View.GONE
+        }
+        binding.tvTitle.text = message
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
     @SuppressLint("MissingPermission")
@@ -128,21 +158,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        //val marker = LatLng(-6.345355, 106.868694) //rumah
-        //val marker = LatLng(-6.371450, 106.824392) //pnj
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker, 16F))
         addCircle(marker, 259.0)
+        mMap.isMyLocationEnabled = true
 
 //        val markerOutside = MarkerOptions().position(LatLng(-6.339954, 106.870418))
 //        mMap.addMarker(markerOutside)
 
 //        val markerInside = MarkerOptions().position(LatLng(-6.344941, 106.869003))
 //        mMap.addMarker(markerInside)
+    }
 
-        locationTask()
+    override fun onResume() {
+        super.onResume()
+        if (hasLocationPermission()) {
+            locationTask()
+        }
     }
 
     private fun checkForGeoFenceEntry(
@@ -160,9 +195,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         if (distanceInMeters < radius) {
             // User is inside the Geo-fence
-            Toast.makeText(this, "Anda berada di area", Toast.LENGTH_SHORT).show()
+            buildAlertMessage("Anda berada di area", true)
+            //Toast.makeText(this, "Anda berada di area", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Anda berada di luar area", Toast.LENGTH_SHORT).show()
+            buildAlertMessage("Anda berada di luar area", false)
         }
     }
 
