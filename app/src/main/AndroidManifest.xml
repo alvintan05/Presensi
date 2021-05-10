@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Presensi">
-        <activity android:name=".ui.riwayat.RiwayatActivity"></activity>
+        <activity android:name=".ui.riwayat.RiwayatActivity" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:theme="@style/NoActionBar" />
@@ -43,8 +43,10 @@
 
         <activity
             android:name=".MapsActivity2"
-            android:label="@string/title_activity_maps2" />
-        <activity android:name=".MapsActivity" />
+            android:label="@string/title_activity_maps2">
+
+        </activity>
+        <activity android:name=".ui.location.MapsActivity" />
         <activity
             android:name=".ui.home.HomeActivity"
             android:theme="@style/NoActionBar" />

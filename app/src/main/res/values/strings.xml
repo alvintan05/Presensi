@@ -10,4 +10,7 @@
     <string name="app_title">E-PRESENSI\nPOLITEKNIK NEGERI JAKARTA</string>
 
     <string name="dialog_no_gps">GPS anda tidak menyala, apakah ingin menyalakan GPS?</string>
+    <string name="dialog_at_pnj">Anda berada di area PNJ\nAnda dapat melanjutkan ke tahap pemeriksaan berikutnya.</string>
+    <string name="dialog_outside_pnj">Anda tidak berada di area PNJ\nSilahkan ulangi proses presensi saat berada di PNJ.</string>
+    <string name="dialog_fake_gps_detected">Anda terdeteksi menggunakan Fake GPS\nSilahkan ulangi proses presensi saat berada di PNJ.</string>
 </resources>

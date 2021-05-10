@@ -6,10 +6,10 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:gravity="center"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:layout_height="300dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/iv_error"
@@ -36,9 +36,9 @@
             android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:fontFamily="@font/roboto"
             android:textAlignment="center"
             android:textColor="@color/black"
@@ -46,7 +46,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/iv_error"
-            tools:text="Anda tidak berada di area PNJ\nSilahkan ulangi proses presensi saat berada di PNJ" />
+            tools:text="@string/dialog_at_pnj" />
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:id="@+id/btn_dialog"
+            app:cornerRadius="10dp"
+            app:backgroundTint="@color/secondary"
+            android:text="Lanjutkan"
+            android:layout_marginTop="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp" />
 
     </LinearLayout>
 
