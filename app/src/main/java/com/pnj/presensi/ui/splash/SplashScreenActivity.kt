@@ -8,7 +8,9 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.pnj.presensi.databinding.ActivitySplashScreenBinding
+import com.pnj.presensi.ui.home.HomeActivity
 import com.pnj.presensi.ui.login.LoginActivity
+import com.pnj.presensi.utils.PresensiDataStore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -27,7 +29,11 @@ class SplashScreenActivity : AppCompatActivity() {
         // coroutine to hold screen several second
         lifecycleScope.launch {
             delay(3000)
-            startActivity(Intent(this@SplashScreenActivity, LoginActivity::class.java))
+            if (PresensiDataStore(this@SplashScreenActivity).isUserLoggedIn()) {
+                startActivity(Intent(this@SplashScreenActivity, HomeActivity::class.java))
+            } else {
+                startActivity(Intent(this@SplashScreenActivity, LoginActivity::class.java))
+            }
             finish()
         }
     }
