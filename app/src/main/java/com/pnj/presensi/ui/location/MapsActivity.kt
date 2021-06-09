@@ -27,7 +27,17 @@ import com.google.maps.android.SphericalUtil
 import com.pnj.presensi.R
 import com.pnj.presensi.databinding.ActivityMapsBinding
 import com.pnj.presensi.databinding.CustomAlertDialogBinding
+import com.pnj.presensi.network.ApiRequest
+import com.pnj.presensi.network.RetrofitServer
+import com.pnj.presensi.utils.Common
+import com.pnj.presensi.utils.PresensiDataStore
+import com.pnj.presensi.utils.Status
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pub.devrel.easypermissions.EasyPermissions
+import retrofit2.HttpException
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.PermissionCallbacks {
@@ -36,19 +46,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mMap: GoogleMap
     private lateinit var location: Location
+    private lateinit var service: ApiRequest
 
     private val TAG = "MapsActivity"
     private val RC_LOCATION_PERM = 123
     private val RC_LOCATION_SETTING = 0
-    private val marker = LatLng(-6.371450, 106.824392) // pnj
+    //private val marker = LatLng(-6.371450, 106.824392) // pnj
     private val radius = 259.0
-    //private val marker = LatLng(-6.345355, 106.868694) //rumah
+    private val marker = LatLng(-6.345355, 106.868694) //rumah
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMapsBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        service = RetrofitServer.apiRequest
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -58,7 +71,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
             if (this::location.isInitialized) {
                 checkForGeoFenceEntry(location, marker.latitude, marker.longitude)
             } else {
-                Toast.makeText(this, "Lokasi belum didapatkan, harap coba lagi", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Lokasi belum didapatkan, harap coba lagi", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -266,7 +280,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
 
         binding.btnDialog.setOnClickListener {
             if (status) {
-                dialog.dismiss()
+                addPresensiDatang()
             } else {
                 dialog.dismiss()
             }
@@ -285,5 +299,50 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
         circleOptions.fillColor(Color.argb(64, 0, 0, 255))
         circleOptions.strokeWidth(4F)
         mMap.addCircle(circleOptions)
+    }
+
+    private fun addPresensiDatang() {
+        val progressDialog = Common.createProgressDialog(this)
+        progressDialog.show()
+        CoroutineScope(Dispatchers.IO).launch {
+            val idPegawai = PresensiDataStore(this@MapsActivity).getIdPegawai()
+            val bundle = intent.extras
+            val jam = bundle?.getString("jam") ?: ""
+            val lokasi = bundle?.getString("lokasi_kerja") ?: ""
+            val response = service.recordPresensiDatang(idPegawai, jam, lokasi)
+            withContext(Dispatchers.Main) {
+                try {
+                    if (response.isSuccessful) {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@MapsActivity,
+                            "Anda Berhasil Melakukan Presensi Datang",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@MapsActivity,
+                            "Error: ${response.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } catch (e: HttpException) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@MapsActivity,
+                        "Exception ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } catch (e: Throwable) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@MapsActivity,
+                        "Something else went wrong",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
     }
 }

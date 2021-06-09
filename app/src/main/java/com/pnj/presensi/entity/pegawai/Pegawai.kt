@@ -6,5 +6,7 @@ data class Pegawai(
     val idGroup: Int,
     val nip: String,
     val nama: String,
-    val status: String
+    val status: String,
+    val namaBagian: String,
+    val namaGroup: String
 )

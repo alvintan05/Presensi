@@ -17,6 +17,7 @@ class PresensiDataStore(private val context: Context) {
         private val idPegawaiKey = intPreferencesKey("IdPegawai")
         private val nipKey = stringPreferencesKey("NIP")
         private val namaKey = stringPreferencesKey("Nama")
+        private val bagianKey = stringPreferencesKey("Bagian")
     }
 
     suspend fun saveSessionAndData(pegawai: Pegawai) {
@@ -25,6 +26,7 @@ class PresensiDataStore(private val context: Context) {
             settings[idPegawaiKey] = pegawai.idPegawai
             settings[nipKey] = pegawai.nip
             settings[namaKey] = pegawai.nama
+            settings[bagianKey] = pegawai.namaBagian
         }
     }
 
@@ -33,6 +35,20 @@ class PresensiDataStore(private val context: Context) {
             preferences[namaKey] ?: ""
         }
         return namaFlow.first()
+    }
+
+    suspend fun getBagian(): String {
+        val bagianFlow: Flow<String> = context.dataStore.data.map { preferences ->
+            preferences[bagianKey] ?: ""
+        }
+        return bagianFlow.first()
+    }
+
+    suspend fun getIdPegawai(): Int {
+        val idFlow: Flow<Int> = context.dataStore.data.map { preferences ->
+            preferences[idPegawaiKey] ?: 0
+        }
+        return idFlow.first()
     }
 
     suspend fun isUserLoggedIn(): Boolean {

@@ -36,10 +36,10 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/roboto"
-        android:textStyle="bold"
         android:text="Nama"
         android:textColor="@color/black"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/tv_date"
         app:layout_constraintStart_toStartOf="@+id/tv_date"
         app:layout_constraintTop_toBottomOf="@+id/tv_date"
@@ -52,8 +52,8 @@
         android:fontFamily="@font/roboto"
         android:text="Bagian"
         android:textColor="@color/black"
-        android:textStyle="bold"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/tv_name"
         app:layout_constraintStart_toStartOf="@+id/tv_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_name"
@@ -70,6 +70,17 @@
         app:layout_constraintStart_toStartOf="@+id/tv_unit"
         app:layout_constraintTop_toBottomOf="@+id/tv_unit" />
 
+    <ImageView
+        android:id="@+id/iv_datang_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/ic_close_red"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/tv_datang"
+        app:layout_constraintStart_toEndOf="@id/tv_datang"
+        app:layout_constraintTop_toTopOf="@id/tv_datang" />
+
     <TextView
         android:id="@+id/tv_pulang"
         android:layout_width="wrap_content"
@@ -79,6 +90,17 @@
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/tv_datang"
         app:layout_constraintTop_toBottomOf="@+id/tv_datang" />
+
+    <ImageView
+        android:id="@+id/iv_pulang_no"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/ic_close_red"
+        app:layout_constraintBottom_toBottomOf="@id/tv_pulang"
+        app:layout_constraintStart_toEndOf="@id/tv_pulang"
+        app:layout_constraintTop_toTopOf="@id/tv_pulang" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_datang"
@@ -103,7 +125,7 @@
                 android:id="@+id/iv_datang"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/ic_baseline_apartment_24"
+                android:src="@drawable/ic_presensi"
                 app:layout_constraintBottom_toTopOf="@+id/tv_datang_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -151,7 +173,7 @@
                 android:id="@+id/iv_pulang"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/ic_baseline_apartment_24"
+                android:src="@drawable/ic_presensi"
                 app:layout_constraintBottom_toTopOf="@+id/tv_pulang_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -196,7 +218,7 @@
                 android:id="@+id/iv_riwayat"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/ic_baseline_apartment_24"
+                android:src="@drawable/ic_history"
                 app:layout_constraintBottom_toTopOf="@+id/tv_riwayat_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -240,7 +262,7 @@
                 android:id="@+id/iv_profile"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/ic_baseline_apartment_24"
+                android:src="@drawable/ic_profile"
                 app:layout_constraintBottom_toTopOf="@+id/tv_profile_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -329,7 +351,7 @@
                 android:id="@+id/iv_logout"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/ic_baseline_apartment_24"
+                android:src="@drawable/ic_logout"
                 app:layout_constraintBottom_toTopOf="@+id/tv_logout_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

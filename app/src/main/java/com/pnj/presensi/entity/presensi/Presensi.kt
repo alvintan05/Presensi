@@ -1,11 +1,12 @@
 package com.pnj.presensi.entity.presensi
 
 data class Presensi(
-    private val idPresensi: Int,
-    private val idPegawai: Int,
-    private val tanggal: String,
-    private val jamPulang: String,
-    private val lokasiKerja: String,
-    private val aktivitasPekerjaan: String,
-    private val jenisTerlambat: String
+    val idPresensi: Int,
+    val idPegawai: Int,
+    val tanggal: String,
+    val jamDatang: String,
+    val jamPulang: String,
+    val lokasiKerja: String,
+    val aktivitasPekerjaan: String,
+    val jenisTerlambat: String
 )
