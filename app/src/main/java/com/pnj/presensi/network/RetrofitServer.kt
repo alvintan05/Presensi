@@ -10,7 +10,7 @@ object RetrofitServer {
     private val loggingInterceptor: HttpLoggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     private val okHttpClient: OkHttpClient = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
 
-    private const val BASE_URL = "http://192.168.43.135:8080/api/v1/"
+    private const val BASE_URL = "http://192.168.43.67:8080/api/v1/"
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()

@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.pnj.presensi.databinding.ActivityHomeBinding
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
+import com.pnj.presensi.ui.face_recognition.FaceRecognitionActivity
 import com.pnj.presensi.ui.location.MapsActivity
 import com.pnj.presensi.ui.login.LoginActivity
 import com.pnj.presensi.utils.Common
@@ -27,6 +28,8 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private lateinit var service: ApiRequest
+    private var datangStatus = false
+    private var pulangStatus = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,17 +42,16 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
             binding.tvName.text = PresensiDataStore(this@HomeActivity).getName()
             binding.tvUnit.text = PresensiDataStore(this@HomeActivity).getBagian()
-            checkTodayPresensi()
         }
 
         binding.tvDate.text = getTodayDate()
 
         binding.cvDatang.setOnClickListener {
-            showDialog()
+            showDialog("datang")
         }
 
         binding.cvPulang.setOnClickListener {
-            showDialog()
+            showDialog("pulang")
         }
 
         binding.cvLogout.setOnClickListener {
@@ -62,21 +64,34 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-    private fun showDialog() {
+    override fun onResume() {
+        super.onResume()
+        checkTodayPresensi()
+        enableDisableButton()
+    }
+
+    private fun showDialog(jenis: String) {
         val items = arrayOf("WFO", "WFH")
         val builder = AlertDialog.Builder(this)
 
         with(builder) {
             setTitle("Pilih Lokasi Kerja")
             setItems(items) { dialog, which ->
-//                Toast.makeText(applicationContext, items[which] + " is clicked", Toast.LENGTH_SHORT).show()
                 val bundle = Bundle()
-                val sdf: SimpleDateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
                 bundle.putString("lokasi_kerja", items[which])
                 bundle.putString("jam", sdf.format(Calendar.getInstance().time))
-                val intent = Intent(this@HomeActivity, MapsActivity::class.java)
-                intent.putExtras(bundle)
-                startActivity(intent)
+                bundle.putString("jenis", jenis)
+
+                if (items[which] == "WFO") {
+                    val intent = Intent(this@HomeActivity, MapsActivity::class.java)
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                } else if (items[which] == "WFH") {
+                    val intent = Intent(this@HomeActivity, FaceRecognitionActivity::class.java)
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                }
             }
             show()
         }
@@ -109,10 +124,11 @@ class HomeActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
+                                pulangStatus = true
                                 binding.tvPulang.text =
                                     "Pulang: ${presensiResponse.data.jamPulang.substring(0, 5)}"
                             }
-
+                            datangStatus = true
                             binding.tvDatang.text =
                                 "Datang: ${presensiResponse.data.jamDatang.substring(0, 5)}"
                         } else if (presensiResponse?.status == Status.FAILURE.toString()) {
@@ -149,6 +165,28 @@ class HomeActivity : AppCompatActivity() {
                     ).show()
                 }
             }
+        }
+    }
+
+    private fun enableDisableButton() {
+        if (!datangStatus) {
+            binding.cvDatang.isEnabled = true
+            binding.cvDatang.setOnClickListener {
+                Toast.makeText(this, "Anda sudah melakukan presensi datang", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        } else {
+            binding.cvDatang.isEnabled = false
+        }
+
+        if (!pulangStatus) {
+            binding.cvPulang.isEnabled = true
+            binding.cvPulang.setOnClickListener {
+                Toast.makeText(this, "Anda sudah melakukan presensi pulang", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        } else {
+            binding.cvPulang.isEnabled = false
         }
     }
 }

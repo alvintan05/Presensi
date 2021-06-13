@@ -29,15 +29,9 @@ import com.pnj.presensi.databinding.ActivityMapsBinding
 import com.pnj.presensi.databinding.CustomAlertDialogBinding
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
-import com.pnj.presensi.utils.Common
-import com.pnj.presensi.utils.PresensiDataStore
-import com.pnj.presensi.utils.Status
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.pnj.presensi.ui.face_recognition.FaceRecognitionActivity
 import pub.devrel.easypermissions.EasyPermissions
-import retrofit2.HttpException
+import java.util.*
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.PermissionCallbacks {
@@ -47,10 +41,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
     private lateinit var mMap: GoogleMap
     private lateinit var location: Location
     private lateinit var service: ApiRequest
+    private lateinit var lokasiKerja: String //WFO atau WFH
+    private lateinit var jam: String
+    private lateinit var jenis: String //Datang atau Pulang
 
     private val TAG = "MapsActivity"
     private val RC_LOCATION_PERM = 123
     private val RC_LOCATION_SETTING = 0
+
     //private val marker = LatLng(-6.371450, 106.824392) // pnj
     private val radius = 259.0
     private val marker = LatLng(-6.345355, 106.868694) //rumah
@@ -62,6 +60,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
         setContentView(view)
 
         service = RetrofitServer.apiRequest
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Pengecekan Lokasi"
+
+        val bundle = intent.extras
+        jam = bundle?.getString("jam") ?: ""
+        lokasiKerja = bundle?.getString("lokasi_kerja") ?: ""
+        jenis = bundle?.getString("jenis") ?: ""
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -280,7 +286,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
 
         binding.btnDialog.setOnClickListener {
             if (status) {
-                addPresensiDatang()
+                intentWithData()
             } else {
                 dialog.dismiss()
             }
@@ -301,48 +307,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
         mMap.addCircle(circleOptions)
     }
 
-    private fun addPresensiDatang() {
-        val progressDialog = Common.createProgressDialog(this)
-        progressDialog.show()
-        CoroutineScope(Dispatchers.IO).launch {
-            val idPegawai = PresensiDataStore(this@MapsActivity).getIdPegawai()
-            val bundle = intent.extras
-            val jam = bundle?.getString("jam") ?: ""
-            val lokasi = bundle?.getString("lokasi_kerja") ?: ""
-            val response = service.recordPresensiDatang(idPegawai, jam, lokasi)
-            withContext(Dispatchers.Main) {
-                try {
-                    if (response.isSuccessful) {
-                        progressDialog.dismiss()
-                        Toast.makeText(
-                            this@MapsActivity,
-                            "Anda Berhasil Melakukan Presensi Datang",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        progressDialog.dismiss()
-                        Toast.makeText(
-                            this@MapsActivity,
-                            "Error: ${response.code()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                } catch (e: HttpException) {
-                    progressDialog.dismiss()
-                    Toast.makeText(
-                        this@MapsActivity,
-                        "Exception ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } catch (e: Throwable) {
-                    progressDialog.dismiss()
-                    Toast.makeText(
-                        this@MapsActivity,
-                        "Something else went wrong",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
+    private fun intentWithData() {
+        val bundle = Bundle()
+        bundle.putString("lokasi_kerja", lokasiKerja)
+        bundle.putString("jam", jam)
+        bundle.putString("jenis", jenis)
+        val intent = Intent(this, FaceRecognitionActivity::class.java)
+        intent.putExtras(bundle)
+        startActivity(intent)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }

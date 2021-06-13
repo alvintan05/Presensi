@@ -6,7 +6,7 @@ import com.pnj.presensi.entity.presensi.PresensiResponse
 import retrofit2.Response
 import retrofit2.http.*
 
-interface ApiRequest {
+interface  ApiRequest {
 
     @FormUrlEncoded
     @POST("account")
@@ -21,6 +21,15 @@ interface ApiRequest {
         @Field(value="id_pegawai") idPegawai: Int,
         @Field(value = "jam_datang") jamDatang: String,
         @Field(value="lokasi_kerja") lokasiKerja: String
+    ): Response<Presensi>
+
+    @FormUrlEncoded
+    @POST("presensi/pulang")
+    suspend fun recordPresensiPulang(
+        @Field("id_pegawai") idPegawai: Int,
+        @Field("jam_pulang") jamPulang: String,
+        @Field("lokasi_kerja") lokasiKerja: String,
+        @Field("aktivitas") aktivitas: String
     ): Response<Presensi>
 
     @GET("presensi/today")
