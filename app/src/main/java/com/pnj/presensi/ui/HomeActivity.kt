@@ -1,4 +1,4 @@
-package com.pnj.presensi.ui.home
+package com.pnj.presensi.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,8 +11,6 @@ import com.pnj.presensi.databinding.ActivityHomeBinding
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
 import com.pnj.presensi.ui.face_recognition.FaceRecognitionActivity
-import com.pnj.presensi.ui.location.MapsActivity
-import com.pnj.presensi.ui.login.LoginActivity
 import com.pnj.presensi.utils.Common
 import com.pnj.presensi.utils.PresensiDataStore
 import com.pnj.presensi.utils.Status
@@ -52,6 +50,14 @@ class HomeActivity : AppCompatActivity() {
 
         binding.cvPulang.setOnClickListener {
             showDialog("pulang")
+        }
+
+        binding.cvRiwayat.setOnClickListener {
+            startActivity(Intent(this, RiwayatActivity::class.java))
+        }
+
+        binding.cvProfil.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
 
         binding.cvLogout.setOnClickListener {
@@ -169,24 +175,24 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun enableDisableButton() {
-        if (!datangStatus) {
-            binding.cvDatang.isEnabled = true
+        if (datangStatus) {
+            binding.cvDatang.isEnabled = false
             binding.cvDatang.setOnClickListener {
                 Toast.makeText(this, "Anda sudah melakukan presensi datang", Toast.LENGTH_SHORT)
                     .show()
             }
         } else {
-            binding.cvDatang.isEnabled = false
+            binding.cvDatang.isEnabled = true
         }
 
-        if (!pulangStatus) {
-            binding.cvPulang.isEnabled = true
+        if (pulangStatus) {
+            binding.cvPulang.isEnabled = false
             binding.cvPulang.setOnClickListener {
                 Toast.makeText(this, "Anda sudah melakukan presensi pulang", Toast.LENGTH_SHORT)
                     .show()
             }
         } else {
-            binding.cvPulang.isEnabled = false
+            binding.cvPulang.isEnabled = true
         }
     }
 }

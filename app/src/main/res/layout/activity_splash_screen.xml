@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.splash.SplashScreenActivity">
+    tools:context=".ui.SplashScreenActivity">
 
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/logo_pnj"
         app:layout_constraintBottom_toTopOf="@+id/tv_app"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

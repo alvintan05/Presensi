@@ -1,4 +1,4 @@
-package com.pnj.presensi.ui.location
+package com.pnj.presensi.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -315,6 +315,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
         val intent = Intent(this, FaceRecognitionActivity::class.java)
         intent.putExtras(bundle)
         startActivity(intent)
+        finish()
     }
 
     override fun onSupportNavigateUp(): Boolean {

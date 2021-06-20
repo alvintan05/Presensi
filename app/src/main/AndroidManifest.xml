@@ -17,19 +17,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Presensi"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.face_recognition.FaceRecognitionActivity"></activity>
+        <activity android:name=".ui.ProfileActivity"></activity>
+        <activity android:name=".ui.PasswordActivity" />
+        <activity android:name=".ui.face_recognition.FaceRecognitionActivity" />
         <activity android:name=".ui.AktivitasActivity" />
-        <activity android:name=".ui.riwayat.RiwayatActivity" />
+        <activity android:name=".ui.RiwayatActivity" />
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".ui.LoginActivity"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".ui.splash.SplashScreenActivity"
+            android:name=".ui.SplashScreenActivity"
             android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+           asdada     <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!--
@@ -44,9 +46,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".ui.location.MapsActivity" />
+        <activity android:name=".ui.MapsActivity" />
         <activity
-            android:name=".ui.home.HomeActivity"
+            android:name=".ui.HomeActivity"
             android:theme="@style/NoActionBar" />
     </application>
 

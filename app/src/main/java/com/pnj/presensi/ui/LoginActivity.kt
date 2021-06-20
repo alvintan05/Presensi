@@ -1,4 +1,4 @@
-package com.pnj.presensi.ui.login
+package com.pnj.presensi.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,7 +8,6 @@ import androidx.datastore.preferences.core.*
 import com.pnj.presensi.databinding.ActivityLoginBinding
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
-import com.pnj.presensi.ui.home.HomeActivity
 import com.pnj.presensi.utils.Common
 import com.pnj.presensi.utils.PresensiDataStore
 import com.pnj.presensi.utils.Status

@@ -58,6 +58,7 @@ class FaceRecognitionActivity : AppCompatActivity() {
         val intent = Intent(this, AktivitasActivity::class.java)
         intent.putExtras(bundle)
         startActivity(intent)
+        finish()
     }
 
     private fun addPresensiDatang() {

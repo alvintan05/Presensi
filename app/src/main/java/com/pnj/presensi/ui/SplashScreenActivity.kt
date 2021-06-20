@@ -1,4 +1,4 @@
-package com.pnj.presensi.ui.splash
+package com.pnj.presensi.ui
 
 import android.content.Intent
 import android.os.Build
@@ -8,8 +8,6 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.pnj.presensi.databinding.ActivitySplashScreenBinding
-import com.pnj.presensi.ui.home.HomeActivity
-import com.pnj.presensi.ui.login.LoginActivity
 import com.pnj.presensi.utils.PresensiDataStore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

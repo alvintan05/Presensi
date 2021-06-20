@@ -4,6 +4,78 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.riwayat.RiwayatActivity">
+    tools:context=".ui.RiwayatActivity">
+
+    <Spinner
+        android:id="@+id/spinner_year"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:spinnerMode="dialog"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/button_search"
+        app:layout_constraintEnd_toStartOf="@+id/spinner_month"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/button_search" />
+
+    <Spinner
+        android:id="@+id/spinner_month"
+        android:layout_width="0dp"
+        android:spinnerMode="dialog"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintHorizontal_weight="4"
+        app:layout_constraintBottom_toBottomOf="@+id/button_search"
+        app:layout_constraintEnd_toStartOf="@+id/button_search"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/spinner_year"
+        app:layout_constraintTop_toTopOf="@+id/button_search" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/secondary"
+        android:text="Cari"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/spinner_month"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_info"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_search"
+        tools:text="Data Presensi tidak ditemukan" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_presensi"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_search" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
