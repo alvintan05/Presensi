@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.pnj.presensi.databinding.ActivityHomeBinding
+import com.pnj.presensi.entity.presensi.Presensi
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
 import com.pnj.presensi.ui.face_recognition.FaceRecognitionActivity
@@ -46,11 +47,21 @@ class HomeActivity : AppCompatActivity() {
         binding.tvDate.text = getTodayDate()
 
         binding.cvDatang.setOnClickListener {
-            showDialog("datang")
+            if (datangStatus) {
+                Toast.makeText(this, "Anda sudah melakukan presensi datang", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                showDialog("datang")
+            }
         }
 
         binding.cvPulang.setOnClickListener {
-            showDialog("pulang")
+            if (pulangStatus) {
+                Toast.makeText(this, "Anda sudah melakukan presensi pulang", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                showDialog("pulang")
+            }
         }
 
         binding.cvRiwayat.setOnClickListener {
@@ -74,7 +85,6 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         checkTodayPresensi()
-        enableDisableButton()
     }
 
     private fun showDialog(jenis: String) {
@@ -123,30 +133,9 @@ class HomeActivity : AppCompatActivity() {
                         progressDialog.dismiss()
                         val presensiResponse = response.body()
                         if (presensiResponse?.status == Status.SUCCESS.toString()) {
-                            if (presensiResponse.data.jamPulang == null) {
-                                binding.ivPulangNo.visibility = View.VISIBLE
-                                Toast.makeText(
-                                    this@HomeActivity,
-                                    "Anda Belum Melakukan Presensi Pulang",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                pulangStatus = true
-                                binding.tvPulang.text =
-                                    "Pulang: ${presensiResponse.data.jamPulang.substring(0, 5)}"
-                            }
-                            datangStatus = true
-                            binding.tvDatang.text =
-                                "Datang: ${presensiResponse.data.jamDatang?.substring(0, 5)}"
+                            updateViewFromData(true, presensiResponse.data)
                         } else if (presensiResponse?.status == Status.FAILURE.toString()) {
-                            binding.ivDatangNo.visibility = View.VISIBLE
-                            binding.ivPulangNo.visibility = View.VISIBLE
-
-                            Toast.makeText(
-                                this@HomeActivity,
-                                "Anda Belum Melakukan Presensi Hari Ini",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            updateViewFromData(false, presensiResponse.data)
                         }
                     } else {
                         progressDialog.dismiss()
@@ -175,25 +164,40 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun enableDisableButton() {
-        if (datangStatus) {
-            binding.cvDatang.isEnabled = false
-            binding.cvDatang.setOnClickListener {
-                Toast.makeText(this, "Anda sudah melakukan presensi datang", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        } else {
-            binding.cvDatang.isEnabled = true
-        }
+    private fun updateViewFromData(status: Boolean, data: Presensi) {
+        if (status) {
+            if (data.jamDatang != null && data.jamPulang != null) {
+                binding.ivDatangNo.visibility = View.GONE
+                binding.ivPulangNo.visibility = View.GONE
 
-        if (pulangStatus) {
-            binding.cvPulang.isEnabled = false
-            binding.cvPulang.setOnClickListener {
-                Toast.makeText(this, "Anda sudah melakukan presensi pulang", Toast.LENGTH_SHORT)
-                    .show()
+                binding.tvDatang.text = "Datang: ${data.jamDatang}"
+                binding.tvPulang.text = "Pulang: ${data.jamPulang}"
+
+                datangStatus = true
+                pulangStatus = true
+
+            } else if (data.jamDatang != null) {
+                binding.tvDatang.text = "Datang: ${data.jamDatang}"
+                binding.ivDatangNo.visibility = View.GONE
+                binding.ivPulangNo.visibility = View.VISIBLE
+
+                datangStatus = true
+                pulangStatus = false
+            } else {
+                binding.tvPulang.text = "Pulang: ${data.jamPulang}"
+                binding.ivDatangNo.visibility = View.VISIBLE
+                binding.ivPulangNo.visibility = View.GONE
+
+                datangStatus = false
+                pulangStatus = true
             }
         } else {
-            binding.cvPulang.isEnabled = true
+            //kondisi belum presensi datang dan pulang
+            binding.ivDatangNo.visibility = View.VISIBLE
+            binding.ivPulangNo.visibility = View.VISIBLE
+
+            datangStatus = false
+            pulangStatus = false
         }
     }
 }
