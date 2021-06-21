@@ -11,6 +11,7 @@ import com.pnj.presensi.databinding.ActivityHomeBinding
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
 import com.pnj.presensi.ui.face_recognition.FaceRecognitionActivity
+import com.pnj.presensi.ui.riwayat.RiwayatActivity
 import com.pnj.presensi.utils.Common
 import com.pnj.presensi.utils.PresensiDataStore
 import com.pnj.presensi.utils.Status
@@ -136,7 +137,7 @@ class HomeActivity : AppCompatActivity() {
                             }
                             datangStatus = true
                             binding.tvDatang.text =
-                                "Datang: ${presensiResponse.data.jamDatang.substring(0, 5)}"
+                                "Datang: ${presensiResponse.data.jamDatang?.substring(0, 5)}"
                         } else if (presensiResponse?.status == Status.FAILURE.toString()) {
                             binding.ivDatangNo.visibility = View.VISIBLE
                             binding.ivPulangNo.visibility = View.VISIBLE

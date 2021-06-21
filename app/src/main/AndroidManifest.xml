@@ -17,11 +17,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Presensi"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.ProfileActivity"></activity>
+        <activity android:name=".ui.riwayat.DetailRiwayatActivity"></activity>
+        <activity android:name=".ui.ProfileActivity" />
         <activity android:name=".ui.PasswordActivity" />
         <activity android:name=".ui.face_recognition.FaceRecognitionActivity" />
         <activity android:name=".ui.AktivitasActivity" />
-        <activity android:name=".ui.RiwayatActivity" />
+        <activity android:name=".ui.riwayat.RiwayatActivity" />
         <activity
             android:name=".ui.LoginActivity"
             android:theme="@style/NoActionBar" />
@@ -30,8 +31,7 @@
             android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-           asdada     <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <!--

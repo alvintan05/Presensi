@@ -1,7 +1,7 @@
-package com.pnj.presensi.ui
+package com.pnj.presensi.ui.riwayat
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pnj.presensi.databinding.ActivityRiwayatBinding
+import com.pnj.presensi.entity.presensi.Presensi
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
 import com.pnj.presensi.ui.adapter.RiwayatAdapter
@@ -89,6 +90,15 @@ class RiwayatActivity : AppCompatActivity() {
             }
 
         }
+
+        adapter.setOnClick(object : RiwayatAdapter.OnItemClickListener {
+            override fun onItemClick(v: View, presensi: Presensi) {
+                val intent = Intent(this@RiwayatActivity, DetailRiwayatActivity::class.java)
+                intent.putExtra("presensi", presensi)
+                startActivity(intent)
+            }
+
+        })
 
     }
 
