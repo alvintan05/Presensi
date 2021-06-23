@@ -14,10 +14,12 @@ class PresensiDataStore(private val context: Context) {
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "DataStore")
         private val loginStatusKey = booleanPreferencesKey("LoginStatus")
+        private val recordImageStatusKey = booleanPreferencesKey("RecordImageStatus")
         private val idPegawaiKey = intPreferencesKey("IdPegawai")
         private val nipKey = stringPreferencesKey("NIP")
         private val namaKey = stringPreferencesKey("Nama")
         private val bagianKey = stringPreferencesKey("Bagian")
+        private val personIdKey = stringPreferencesKey("PersonId")
     }
 
     suspend fun saveSessionAndData(pegawai: Pegawai) {
@@ -27,6 +29,25 @@ class PresensiDataStore(private val context: Context) {
             settings[nipKey] = pegawai.nip
             settings[namaKey] = pegawai.nama
             settings[bagianKey] = pegawai.namaBagian
+        }
+    }
+
+    suspend fun savePersonIdAndFaceSession(id: String, status: Boolean) {
+        context.dataStore.edit { settings ->
+            settings[personIdKey] = id
+            settings[recordImageStatusKey] = status
+        }
+    }
+
+    suspend fun savePersonId(id: String) {
+        context.dataStore.edit { settings ->
+            settings[personIdKey] = id
+        }
+    }
+
+    suspend fun saveFaceSession(status: Boolean) {
+        context.dataStore.edit { settings ->
+            settings[recordImageStatusKey] = status
         }
     }
 
@@ -47,6 +68,13 @@ class PresensiDataStore(private val context: Context) {
     suspend fun getIdPegawai(): Int {
         val idFlow: Flow<Int> = context.dataStore.data.map { preferences ->
             preferences[idPegawaiKey] ?: 0
+        }
+        return idFlow.first()
+    }
+
+    suspend fun getFaceId(): String {
+        val idFlow: Flow<String> = context.dataStore.data.map { preferences ->
+            preferences[personIdKey] ?: ""
         }
         return idFlow.first()
     }
