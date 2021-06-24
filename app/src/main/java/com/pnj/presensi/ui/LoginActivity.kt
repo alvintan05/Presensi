@@ -7,10 +7,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.core.*
 import com.pnj.presensi.databinding.ActivityLoginBinding
-import com.pnj.presensi.entity.azure.person_group_person.PersonGroupPerson
+import com.pnj.presensi.entity.azure.PersonGroupPerson
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.AzureRequest
 import com.pnj.presensi.network.RetrofitServer
+import com.pnj.presensi.ui.face_recognition.RecordFaceActivity
 import com.pnj.presensi.utils.Common
 import com.pnj.presensi.utils.PresensiDataStore
 import com.pnj.presensi.utils.Status
@@ -89,7 +90,12 @@ class LoginActivity : AppCompatActivity() {
                         if (pegawaiResponse?.status == Status.SUCCESS.toString()) {
                             val pegawaiData = pegawaiResponse.data
                             PresensiDataStore(this@LoginActivity).saveSessionAndData(pegawaiData)
-                            checkPersonGroupPersonExists("alvina tandiardi_12345")
+                            checkPersonGroupPersonExists(
+                                Common.createNameForAzure(
+                                    pegawaiData.nama,
+                                    pegawaiData.nip
+                                )
+                            )
                         } else if (pegawaiResponse?.status == Status.FAILURE.toString()) {
                             Toast.makeText(
                                 this@LoginActivity,
@@ -139,6 +145,10 @@ class LoginActivity : AppCompatActivity() {
                             if (person.persistedFaceIds.isEmpty()) {
                                 //apabila tidak ada face di person
                                 PresensiDataStore(this@LoginActivity).savePersonId(person.personId)
+                                val intent = Intent(this@LoginActivity, RecordFaceActivity::class.java)
+                                intent.putExtra("person", true)
+                                startActivity(intent)
+                                finish()
                             } else {
                                 //apabila data lengkap
                                 PresensiDataStore(this@LoginActivity).savePersonIdAndFaceSession(
@@ -154,11 +164,16 @@ class LoginActivity : AppCompatActivity() {
                                 finish()
                             }
                         } else {
+                            //apabila tidak ada person group person
                             Toast.makeText(
                                 this@LoginActivity,
                                 "Person Belum Ada",
                                 Toast.LENGTH_SHORT
                             ).show()
+                            val intent = Intent(this@LoginActivity, RecordFaceActivity::class.java)
+                            intent.putExtra("person", false)
+                            startActivity(intent)
+                            finish()
                         }
                     } else {
                         progressDialog.dismiss()

@@ -8,6 +8,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.pnj.presensi.databinding.ActivitySplashScreenBinding
+import com.pnj.presensi.ui.face_recognition.RecordFaceActivity
 import com.pnj.presensi.utils.PresensiDataStore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,7 +29,22 @@ class SplashScreenActivity : AppCompatActivity() {
         lifecycleScope.launch {
             delay(3000)
             if (PresensiDataStore(this@SplashScreenActivity).isUserLoggedIn()) {
-                startActivity(Intent(this@SplashScreenActivity, HomeActivity::class.java))
+                if (PresensiDataStore(this@SplashScreenActivity).getPersonId() == "") {
+                    // belum punya person group person
+                    val intent = Intent(this@SplashScreenActivity, RecordFaceActivity::class.java)
+                    intent.putExtra("person", false)
+                    startActivity(intent)
+                } else {
+                    if (PresensiDataStore(this@SplashScreenActivity).isRecordImageExists()) {
+                        // sudah punya person group person dan record face
+                        startActivity(Intent(this@SplashScreenActivity, HomeActivity::class.java))
+                    } else {
+                        // sudah punya person group person dan belum record face
+                        val intent = Intent(this@SplashScreenActivity, RecordFaceActivity::class.java)
+                        intent.putExtra("person", true)
+                        startActivity(intent)
+                    }
+                }
             } else {
                 startActivity(Intent(this@SplashScreenActivity, LoginActivity::class.java))
             }

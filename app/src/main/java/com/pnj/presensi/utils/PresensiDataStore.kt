@@ -72,7 +72,14 @@ class PresensiDataStore(private val context: Context) {
         return idFlow.first()
     }
 
-    suspend fun getFaceId(): String {
+    suspend fun getNip(): String {
+        val nipFlow: Flow<String> = context.dataStore.data.map { preferences ->
+            preferences[nipKey] ?: ""
+        }
+        return nipFlow.first()
+    }
+
+    suspend fun getPersonId(): String {
         val idFlow: Flow<String> = context.dataStore.data.map { preferences ->
             preferences[personIdKey] ?: ""
         }
@@ -82,6 +89,13 @@ class PresensiDataStore(private val context: Context) {
     suspend fun isUserLoggedIn(): Boolean {
         val statusFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
             preferences[loginStatusKey] ?: false
+        }
+        return statusFlow.first()
+    }
+
+    suspend fun isRecordImageExists(): Boolean {
+        val statusFlow: Flow<Boolean> = context.dataStore.data.map { preferences ->
+            preferences[recordImageStatusKey] ?: false
         }
         return statusFlow.first()
     }

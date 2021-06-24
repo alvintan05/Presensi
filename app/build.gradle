@@ -50,9 +50,6 @@ dependencies {
     // Easy Permission
     implementation 'pub.devrel:easypermissions:3.0.0'
 
-    // Calendar View
-    implementation 'com.github.kizitonwose:CalendarView:1.0.3'
-
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
@@ -68,6 +65,9 @@ dependencies {
 
     //Validator
     implementation "com.wajahatkarim3.easyvalidation:easyvalidation-core:1.0.1"
+
+    //Camera View
+    implementation 'com.otaliastudios:cameraview:2.7.0'
 
     // Preferences DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0-beta01"

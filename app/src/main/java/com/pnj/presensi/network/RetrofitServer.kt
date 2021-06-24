@@ -11,10 +11,12 @@ object RetrofitServer {
 
     private val loggingInterceptor: HttpLoggingInterceptor =
         HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+
     private val okHttpClient: OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .build()
+
     private val okHttpClientAzure = OkHttpClient.Builder().apply {
         addInterceptor(
             Interceptor { chain ->

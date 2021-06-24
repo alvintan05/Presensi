@@ -1,4 +1,4 @@
-package com.pnj.presensi.entity.azure.person_group_person
+package com.pnj.presensi.entity.azure
 
 data class PersonGroupPerson(
 	val name: String,
