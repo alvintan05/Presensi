@@ -13,4 +13,12 @@
     <string name="dialog_at_pnj">Anda berada di area PNJ\nAnda dapat melanjutkan ke tahap pemeriksaan berikutnya.</string>
     <string name="dialog_outside_pnj">Anda tidak berada di area PNJ\nSilahkan ulangi proses presensi saat berada di PNJ.</string>
     <string name="dialog_fake_gps_detected">Anda terdeteksi menggunakan Fake GPS\nSilahkan ulangi proses presensi saat berada di PNJ.</string>
+
+    <string name="dialog_face_recog_success">Wajah Berhasil Diverifikasi\nTekan tombol kirim untuk menyelesaikan presensi</string>
+    <string name="dialog_face_detect_fail">Wajah Tidak Terdeteksi\nPastikan kamera terarah ke wajah</string>
+    <string name="dialog_face_recog_fail">Verifikasi Wajah Gagal\nPastikan Anda adalah pegawai yang sama dengan akun ini</string>
+    <string name="dialog_face_recog_fail_max">Verifikasi Wajah Gagal\nAnda sudah gagal 3 kali, silahkan lanjutkan ke tahap verifikasi tambahan</string>
+
+    <string name="button_send">Kirim</string>
+    <string name="button_try">Coba Lagi</string>
 </resources>

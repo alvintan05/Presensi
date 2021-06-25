@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.pnj.presensi.R
 import com.pnj.presensi.databinding.ActivityRiwayatBinding
 import com.pnj.presensi.entity.presensi.Presensi
 import com.pnj.presensi.network.ApiRequest
@@ -48,7 +49,7 @@ class RiwayatActivity : AppCompatActivity() {
 
         ArrayAdapter(
             this,
-            android.R.layout.simple_spinner_item,
+            R.layout.item_spinner,
             listYear
         ).also { adapter ->
             // Specify the layout to use when the list of choices appears
@@ -135,7 +136,7 @@ class RiwayatActivity : AppCompatActivity() {
 
         ArrayAdapter(
             this,
-            android.R.layout.simple_spinner_item,
+            R.layout.item_spinner,
             months
         ).also { adapter ->
             // Specify the layout to use when the list of choices appears

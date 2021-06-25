@@ -168,7 +168,7 @@ class RecordFaceActivity : AppCompatActivity() {
                     progressDialog.dismiss()
                     Toast.makeText(
                         this@RecordFaceActivity,
-                        "Something else went wrong\n${e.message}",
+                        "Wajah tidak terdeteksi, harap coba lagi",
                         Toast.LENGTH_SHORT
                     ).show()
                 }

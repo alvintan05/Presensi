@@ -19,7 +19,7 @@
         android:fontFamily="@font/roboto"
         android:gravity="top"
         android:hint="Isi Aktivitas Pekerjaan Hari ini"
-        android:inputType="textMultiLine"
+        android:inputType="textMultiLine|textCapSentences"
         android:padding="8dp"
         android:textColor="@color/black"
         android:textSize="16sp"

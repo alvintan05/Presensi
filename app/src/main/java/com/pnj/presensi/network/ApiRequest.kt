@@ -33,6 +33,13 @@ interface ApiRequest {
         @Field("aktivitas") aktivitas: String
     ): Response<Presensi>
 
+    @FormUrlEncoded
+    @POST("account/check")
+    suspend fun checkPasswordAccount(
+        @Field("username") username: String,
+        @Field("password") password: String
+    ): Response<Boolean>
+
     @GET("presensi/today")
     suspend fun getTodayPresensi(@Query("id_pegawai") idPegawai: Int): Response<PresensiResponse>
 
