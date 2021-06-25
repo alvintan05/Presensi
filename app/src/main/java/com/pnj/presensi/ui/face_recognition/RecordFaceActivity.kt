@@ -33,6 +33,7 @@ class RecordFaceActivity : AppCompatActivity() {
     private lateinit var binding: LayoutCameraBinding
     private lateinit var serviceAzure: AzureRequest
     private lateinit var progressDialog: ProgressDialog
+    private var isManage = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +64,8 @@ class RecordFaceActivity : AppCompatActivity() {
             binding.camera.takePicture()
         }
 
-        var isPersonCreated = intent.getBooleanExtra("person", false)
+        val isPersonCreated = intent.getBooleanExtra("person", false)
+        isManage = intent.getBooleanExtra("manage", false)
 
         if (!isPersonCreated) {
             createPersonGroupPerson()
@@ -240,16 +242,98 @@ class RecordFaceActivity : AppCompatActivity() {
         }
 
         builder.setNegativeButton("Tidak") { dialog, which ->
-            CoroutineScope(Dispatchers.IO).launch {
-                PresensiDataStore(this@RecordFaceActivity).saveFaceSession(true)
-                withContext(Dispatchers.Main){
-                    startActivity(Intent(this@RecordFaceActivity, HomeActivity::class.java))
-                    finish()
-                }
-            }
+            trainPersonGroup()
         }
 
         builder.show()
+    }
+
+    private fun trainPersonGroup() {
+        progressDialog.setMessage("Train Data Wajah")
+        progressDialog.show()
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = serviceAzure.trainPersonGroup("test")
+            withContext(Dispatchers.Main) {
+                try {
+                    if (response.isSuccessful) {
+                        progressDialog.dismiss()
+                        getTrainingStatus()
+                    } else {
+                        progressDialog.dismiss()
+                        trainPersonGroup()
+                    }
+                } catch (e: HttpException) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@RecordFaceActivity,
+                        "Exception ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } catch (e: Throwable) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@RecordFaceActivity,
+                        "Something else went wrong",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun getTrainingStatus() {
+        progressDialog.setMessage("Train Data Wajah")
+        progressDialog.show()
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = serviceAzure.getTrainingPersonGroupStatus("test")
+            withContext(Dispatchers.Main) {
+                try {
+                    if (response.isSuccessful) {
+                        progressDialog.dismiss()
+                        val responseData = response.body()
+                        if (responseData != null) {
+                            if (responseData.status == "succeeded") {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    PresensiDataStore(this@RecordFaceActivity).saveFaceSession(true)
+                                    withContext(Dispatchers.Main) {
+                                        if (!isManage) {
+                                            startActivity(
+                                                Intent(
+                                                    this@RecordFaceActivity,
+                                                    HomeActivity::class.java
+                                                )
+                                            )
+                                            finish()
+                                        } else {
+                                            finish()
+                                        }
+                                    }
+                                }
+                            } else {
+                                getTrainingStatus()
+                            }
+                        }
+                    } else {
+                        progressDialog.dismiss()
+                        trainPersonGroup()
+                    }
+                } catch (e: HttpException) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@RecordFaceActivity,
+                        "Exception ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } catch (e: Throwable) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@RecordFaceActivity,
+                        "Something else went wrong",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
     }
 
 }

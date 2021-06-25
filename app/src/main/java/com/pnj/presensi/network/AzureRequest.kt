@@ -19,6 +19,11 @@ interface AzureRequest {
         @Path(value = "personId") personId: String
     ): Response<PersonGroupPerson>
 
+    @GET("persongroups/{personGroupId}/training")
+    suspend fun getTrainingPersonGroupStatus(
+        @Path(value = "personGroupId") personGroupId: String
+    ): Response<TrainingResponse>
+
     @Headers("Content-type: application/octet-stream")
     @POST("detect")
     suspend fun detectFace(@Body body: RequestBody): Response<List<FaceDetectResponse>>
@@ -40,5 +45,10 @@ interface AzureRequest {
         @Path(value = "personGroupId") personGroupId: String,
         @Body body: JsonObject
     ): Response<PersonGroupPersonCreate>
+
+    @POST("persongroups/{personGroupId}/train")
+    suspend fun trainPersonGroup(
+        @Path(value = "personGroupId") personGroupId: String,
+    ): Response<Void>
 
 }

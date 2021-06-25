@@ -72,6 +72,7 @@ class FaceRecognitionActivity : AppCompatActivity() {
                         val stream = ByteArrayOutputStream()
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                         val byte = stream.toByteArray()
+                        detectFace(byte)
                     }
                 }
             }
@@ -84,6 +85,7 @@ class FaceRecognitionActivity : AppCompatActivity() {
     }
 
     private fun detectFace(datas: ByteArray) {
+        progressDialog.show()
         val requestBody: RequestBody = object : RequestBody() {
             override fun contentType(): MediaType? {
                 return MediaType.parse("application/octet-stream")
@@ -95,18 +97,18 @@ class FaceRecognitionActivity : AppCompatActivity() {
             }
         }
 
-        progressDialog.show()
         CoroutineScope(Dispatchers.IO).launch {
             val response = serviceAzure.detectFace(requestBody)
             withContext(Dispatchers.Main) {
                 try {
                     if (response.isSuccessful) {
                         val data = response.body()
-                        progressDialog.dismiss()
                         if (!data.isNullOrEmpty()) {
+                            progressDialog.dismiss()
                             val faceId = data[0].faceId
                             verifyFacePerson(faceId)
                         } else {
+                            progressDialog.dismiss()
                             Toast.makeText(
                                 this@FaceRecognitionActivity,
                                 "Wajah tidak terdeteksi, harap coba lagi",
@@ -145,12 +147,11 @@ class FaceRecognitionActivity : AppCompatActivity() {
     private fun verifyFacePerson(faceId: String) {
         progressDialog.show()
         CoroutineScope(Dispatchers.IO).launch {
-            val body = VerifyBodyRequest(faceId, "420c64a1-36c2-40e1-8739-42f7144605e8", "test")
-//            val body = VerifyBodyRequest(
-//                faceId,
-//                PresensiDataStore(this@FaceRecognitionActivity).getPersonId(),
-//                "test"
-//            )
+            val body = VerifyBodyRequest(
+                faceId,
+                PresensiDataStore(this@FaceRecognitionActivity).getPersonId(),
+                "test"
+            )
             val response = serviceAzure.verifyFaceToPerson(body)
             withContext(Dispatchers.Main) {
                 try {
@@ -160,7 +161,7 @@ class FaceRecognitionActivity : AppCompatActivity() {
                             if (data.isIdentical && data.confidence > 0.6) {
                                 Toast.makeText(
                                     this@FaceRecognitionActivity,
-                                    "Anda adalah Alvin Tandiardi",
+                                    "Wajah Dikenali",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
