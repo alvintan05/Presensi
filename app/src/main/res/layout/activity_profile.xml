@@ -1,96 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
     android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".ui.ProfileActivity">
 
     <TextView
-        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Nama"
         android:textColor="@color/black"
-        android:textStyle="bold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_nama"
-        tools:text="Budi Gunawan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        tools:text="Budi Gunawan" />
 
     <View
-        android:layout_marginTop="5dp"
-        android:background="@color/black"
         android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/black" />
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:textSize="18sp"
         android:text="NIP"
         android:textColor="@color/black"
-        android:textStyle="bold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_nip"
-        tools:text="12345678910"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        tools:text="12345678910" />
 
     <View
-        android:layout_marginTop="5dp"
-        android:background="@color/black"
         android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/black" />
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:textSize="18sp"
         android:text="Unit/Bagian/Jurusan"
         android:textColor="@color/black"
-        android:textStyle="bold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_bagian"
-        tools:text="UTD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        tools:text="UTD" />
 
     <View
-        android:layout_marginTop="5dp"
-        android:background="@color/black"
         android:layout_width="match_parent"
-        android:layout_height="1dp"/>
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/black" />
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:textSize="18sp"
         android:text="Status"
         android:textColor="@color/black"
-        android:textStyle="bold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_status"
-        tools:text="PNS"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textSize="16sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        tools:text="PNS" />
 
 </LinearLayout>

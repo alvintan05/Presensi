@@ -19,7 +19,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Presensi"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.face_recognition.ManageFaceActivity"></activity>
         <activity android:name=".ui.face_recognition.RecordFaceActivity" />
         <activity android:name=".ui.riwayat.DetailRiwayatActivity" />
         <activity android:name=".ui.ProfileActivity" />

@@ -45,7 +45,7 @@ class RecordFaceActivity : AppCompatActivity() {
         serviceAzure = RetrofitServer.azureRequest
         progressDialog = Common.createProgressDialog(this)
 
-        supportActionBar?.title = "Perekam Wajah"
+        supportActionBar?.title = "Tambah Data Wajah"
 
         binding.camera.addCameraListener(object : CameraListener() {
             override fun onPictureTaken(result: PictureResult) {

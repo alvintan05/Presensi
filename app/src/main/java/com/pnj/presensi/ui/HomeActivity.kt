@@ -12,7 +12,7 @@ import com.pnj.presensi.entity.presensi.Presensi
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
 import com.pnj.presensi.ui.face_recognition.FaceRecognitionActivity
-import com.pnj.presensi.ui.face_recognition.ManageFaceActivity
+import com.pnj.presensi.ui.face_recognition.RecordFaceActivity
 import com.pnj.presensi.ui.riwayat.RiwayatActivity
 import com.pnj.presensi.utils.Common
 import com.pnj.presensi.utils.PresensiDataStore
@@ -74,7 +74,10 @@ class HomeActivity : AppCompatActivity() {
         }
 
         binding.cvKelola.setOnClickListener {
-            startActivity(Intent(this, ManageFaceActivity::class.java))
+            val intent = Intent(this, RecordFaceActivity::class.java)
+            intent.putExtra("manage", true)
+            intent.putExtra("person", true)
+            startActivity(intent)
         }
 
         binding.cvLogout.setOnClickListener {

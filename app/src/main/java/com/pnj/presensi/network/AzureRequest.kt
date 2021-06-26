@@ -13,12 +13,6 @@ interface AzureRequest {
         @Path(value = "personGroupId") personGroupId: String
     ): Response<List<PersonGroupPerson>>
 
-    @GET("persongroups/{personGroupId}/persons/{personId}")
-    suspend fun getPersonGroupPersonData(
-        @Path(value = "personGroupId") personGroupId: String,
-        @Path(value = "personId") personId: String
-    ): Response<PersonGroupPerson>
-
     @GET("persongroups/{personGroupId}/training")
     suspend fun getTrainingPersonGroupStatus(
         @Path(value = "personGroupId") personGroupId: String
