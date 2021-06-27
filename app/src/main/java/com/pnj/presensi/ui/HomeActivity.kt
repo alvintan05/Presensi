@@ -184,6 +184,11 @@ class HomeActivity : AppCompatActivity() {
                 datangStatus = true
                 pulangStatus = true
 
+                binding.tvLokasiDatang.visibility = View.VISIBLE
+                binding.tvLokasiPulang.visibility = View.VISIBLE
+                binding.tvLokasiDatang.text = data.lokasiKerja
+                binding.tvLokasiPulang.text = data.lokasiKerja
+
             } else if (data.jamDatang != null) {
                 binding.tvDatang.text = "Datang: ${data.jamDatang}"
                 binding.ivDatangNo.visibility = View.GONE
@@ -191,6 +196,10 @@ class HomeActivity : AppCompatActivity() {
 
                 datangStatus = true
                 pulangStatus = false
+
+                binding.tvLokasiDatang.visibility = View.VISIBLE
+                binding.tvLokasiPulang.visibility = View.GONE
+                binding.tvLokasiDatang.text = data.lokasiKerja
             } else {
                 binding.tvPulang.text = "Pulang: ${data.jamPulang}"
                 binding.ivDatangNo.visibility = View.VISIBLE
@@ -198,6 +207,10 @@ class HomeActivity : AppCompatActivity() {
 
                 datangStatus = false
                 pulangStatus = true
+
+                binding.tvLokasiDatang.visibility = View.GONE
+                binding.tvLokasiPulang.visibility = View.VISIBLE
+                binding.tvLokasiPulang.text = data.lokasiKerja
             }
         } else {
             //kondisi belum presensi datang dan pulang
@@ -206,6 +219,9 @@ class HomeActivity : AppCompatActivity() {
 
             datangStatus = false
             pulangStatus = false
+
+            binding.tvLokasiDatang.visibility = View.GONE
+            binding.tvLokasiPulang.visibility = View.GONE
         }
     }
 }
