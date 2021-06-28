@@ -10,13 +10,11 @@ data class Presensi(
     val jamDatang: String?,
     val jamPulang: String?,
     val lokasiKerja: String?,
-    val aktivitasPekerjaan: String?,
-    val jenisTerlambat: String?
-): Parcelable {
+    val aktivitasPekerjaan: String?
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readInt(),
-        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -33,7 +31,6 @@ data class Presensi(
         parcel.writeString(jamPulang)
         parcel.writeString(lokasiKerja)
         parcel.writeString(aktivitasPekerjaan)
-        parcel.writeString(jenisTerlambat)
     }
 
     override fun describeContents(): Int {
