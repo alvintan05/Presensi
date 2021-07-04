@@ -117,12 +117,6 @@ class FaceRecognitionActivity : AppCompatActivity() {
                         }
                     } else {
                         progressDialog.dismiss()
-//                        Toast.makeText(
-//                            this@FaceRecognitionActivity,
-//                            "Wajah tidak terdeteksi, harap coba lagi",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-
                         counterError++
                         if (counterError == 3) {
                             buildAlertMessage(4)
@@ -132,11 +126,6 @@ class FaceRecognitionActivity : AppCompatActivity() {
                     }
                 } catch (e: HttpException) {
                     progressDialog.dismiss()
-//                    Toast.makeText(
-//                        this@FaceRecognitionActivity,
-//                        "Exception ${e.message}",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
                     counterError++
                     if (counterError == 3) {
                         buildAlertMessage(4)
@@ -145,11 +134,6 @@ class FaceRecognitionActivity : AppCompatActivity() {
                     }
                 } catch (e: Throwable) {
                     progressDialog.dismiss()
-//                    Toast.makeText(
-//                        this@FaceRecognitionActivity,
-//                        "Wajah tidak terdeteksi, harap coba lagi",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
                     counterError++
                     if (counterError == 3) {
                         buildAlertMessage(4)
@@ -178,18 +162,8 @@ class FaceRecognitionActivity : AppCompatActivity() {
                         val data = response.body()
                         if (data != null) {
                             if (data.isIdentical && data.confidence > 0.6) {
-//                                Toast.makeText(
-//                                    this@FaceRecognitionActivity,
-//                                    "Wajah Dikenali",
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
                                 buildAlertMessage(1)
                             } else {
-//                                Toast.makeText(
-//                                    this@FaceRecognitionActivity,
-//                                    "Anda tidak dikenali",
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
                                 counterError++
                                 if (counterError == 3) {
                                     buildAlertMessage(4)
@@ -199,11 +173,6 @@ class FaceRecognitionActivity : AppCompatActivity() {
                             }
                         }
                     } else {
-//                        Toast.makeText(
-//                            this@FaceRecognitionActivity,
-//                            "Gagal, Silahkan coba lagi",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
                         progressDialog.dismiss()
                         if (counterError == 3) {
                             buildAlertMessage(4)
@@ -213,11 +182,6 @@ class FaceRecognitionActivity : AppCompatActivity() {
                     }
                 } catch (e: HttpException) {
                     progressDialog.dismiss()
-//                    Toast.makeText(
-//                        this@FaceRecognitionActivity,
-//                        "Exception ${e.message}",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
                     if (counterError == 3) {
                         buildAlertMessage(4)
                     } else {
@@ -225,11 +189,6 @@ class FaceRecognitionActivity : AppCompatActivity() {
                     }
                 } catch (e: Throwable) {
                     progressDialog.dismiss()
-//                    Toast.makeText(
-//                        this@FaceRecognitionActivity,
-//                        "Something else went wrong\n${e.message}",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
                     if (counterError == 3) {
                         buildAlertMessage(4)
                     } else {
@@ -352,10 +311,10 @@ class FaceRecognitionActivity : AppCompatActivity() {
                         intentWithData(true)
                     }
                 }
-                2, 3 ->{
+                2, 3 -> {
                     dialog.dismiss()
                 }
-                4 ->{
+                4 -> {
                     intentWithData(false)
                 }
             }

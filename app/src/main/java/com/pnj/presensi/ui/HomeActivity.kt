@@ -173,6 +173,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateViewFromData(status: Boolean, data: Presensi) {
+        binding.tvDatang.text = "Datang"
+        binding.tvPulang.text = "Pulang"
         if (status) {
             if (data.jamDatang != null && data.jamPulang != null) {
                 binding.ivDatangNo.visibility = View.GONE

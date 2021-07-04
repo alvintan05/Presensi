@@ -233,13 +233,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
         geofenceLong: Double
     ) {
         val startLatLng = LatLng(userLocation.latitude, userLocation.longitude) // User Location
-        //val startLatLng = LatLng(-6.344941, 106.869003) // dalam
-        //val startLatLng = LatLng(-6.339954, 106.870418) // luar
         val geofenceLatLng = LatLng(geofenceLat, geofenceLong) // Center of geofence
 
         val distanceInMeters = SphericalUtil.computeDistanceBetween(startLatLng, geofenceLatLng)
 
-        if (distanceInMeters < radius) {
+        if (distanceInMeters <= radius) {
             // User is inside the Geo-fence
             buildAlertMessage(getString(R.string.dialog_at_pnj), true)
         } else {

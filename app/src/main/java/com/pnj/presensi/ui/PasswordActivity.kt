@@ -1,6 +1,7 @@
 package com.pnj.presensi.ui
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -82,7 +83,20 @@ class PasswordActivity : AppCompatActivity() {
                         progressDialog.dismiss()
                         val status = response.body()
                         if (status == true) {
-                            addPresensiDatang()
+                            if (jenis == "datang") {
+                                addPresensiDatang()
+                            } else if (jenis == "pulang") {
+                                val bundle = Bundle()
+                                bundle.putString("lokasi_kerja", lokasiKerja)
+                                bundle.putString("jam", jam)
+                                bundle.putString("jenis", jenis)
+
+                                val intent =
+                                    Intent(this@PasswordActivity, AktivitasActivity::class.java)
+                                intent.putExtras(bundle)
+                                startActivity(intent)
+                                finish()
+                            }
                         } else {
                             Toast.makeText(
                                 this@PasswordActivity,
