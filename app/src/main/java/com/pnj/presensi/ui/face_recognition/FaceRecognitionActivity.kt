@@ -1,9 +1,12 @@
 package com.pnj.presensi.ui.face_recognition
 
+import android.Manifest
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -29,9 +32,11 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okio.BufferedSink
+import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.HttpException
-import java.io.ByteArrayOutputStream
-import java.io.IOException
+import java.io.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class FaceRecognitionActivity : AppCompatActivity() {
 
@@ -42,8 +47,10 @@ class FaceRecognitionActivity : AppCompatActivity() {
     private lateinit var jenis: String //Datang atau Pulang
     private lateinit var serviceAzure: AzureRequest
     private lateinit var progressDialog: ProgressDialog
+    private lateinit var outputStream: FileOutputStream
 
     private var counterError = 0
+//    private val RC_STORAGE_PERM = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +62,13 @@ class FaceRecognitionActivity : AppCompatActivity() {
         service = RetrofitServer.apiRequest
         serviceAzure = RetrofitServer.azureRequest
         progressDialog = Common.createProgressDialog(this)
+
+//        EasyPermissions.requestPermissions(
+//            this,
+//            getString(R.string.rationale_location),
+//            RC_STORAGE_PERM,
+//            Manifest.permission.WRITE_EXTERNAL_STORAGE
+//        )
 
         // Get intent data
         val bundle = intent.extras
@@ -72,7 +86,7 @@ class FaceRecognitionActivity : AppCompatActivity() {
                         val stream = ByteArrayOutputStream()
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                         val byte = stream.toByteArray()
-                        detectFace(byte)
+                        detectFace(byte, bitmap)
                     }
                 }
             }
@@ -84,7 +98,17 @@ class FaceRecognitionActivity : AppCompatActivity() {
 
     }
 
-    private fun detectFace(datas: ByteArray) {
+    // permission storage hanya untuk keperluan testing
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+//    }
+
+    private fun detectFace(datas: ByteArray, bitmap: Bitmap) {
         progressDialog.show()
         val requestBody: RequestBody = object : RequestBody() {
             override fun contentType(): MediaType? {
@@ -106,6 +130,10 @@ class FaceRecognitionActivity : AppCompatActivity() {
                         val data = response.body()
                         if (!data.isNullOrEmpty()) {
                             val faceId = data[0].faceId
+                            val croppedByteArray = Common.cropImage(bitmap, data[0].faceRectangle)
+//                            saveImageLocal(datas)
+//                            saveImageLocal(croppedByteArray)
+
                             verifyFacePerson(faceId)
                         } else {
                             counterError++
@@ -152,7 +180,7 @@ class FaceRecognitionActivity : AppCompatActivity() {
             val body = VerifyBodyRequest(
                 faceId,
                 PresensiDataStore(this@FaceRecognitionActivity).getPersonId(),
-                "test"
+                "pegawai"
             )
             val response = serviceAzure.verifyFaceToPerson(body)
             withContext(Dispatchers.Main) {
@@ -161,7 +189,7 @@ class FaceRecognitionActivity : AppCompatActivity() {
                         progressDialog.dismiss()
                         val data = response.body()
                         if (data != null) {
-                            if (data.isIdentical && data.confidence > 0.6) {
+                            if (data.isIdentical) {
                                 buildAlertMessage(1)
                             } else {
                                 counterError++
@@ -318,6 +346,41 @@ class FaceRecognitionActivity : AppCompatActivity() {
                     intentWithData(false)
                 }
             }
+        }
+    }
+
+    private fun saveImageLocal(byteArray: ByteArray) {
+        val filepath = Environment.getExternalStorageDirectory()
+        val format = SimpleDateFormat(
+            "yyyy-MM-dd-HH-mm-ss-SSS",
+            Locale.US
+        ).format(System.currentTimeMillis())
+
+        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size);
+        val imageFile = File("${filepath.absolutePath}/presensi/")
+        imageFile.mkdir()
+
+        val file = File(imageFile, "$format.png")
+        try {
+            outputStream = FileOutputStream(file)
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        }
+
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show()
+
+        try {
+            outputStream.flush()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+
+        try {
+            outputStream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 

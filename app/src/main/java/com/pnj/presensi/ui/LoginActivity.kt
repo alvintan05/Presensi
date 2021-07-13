@@ -133,7 +133,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun checkPersonGroupPersonExists(personName: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = azureService.getListPersonGroupPerson("test")
+            val response = azureService.getListPersonGroupPerson("pegawai")
             withContext(Dispatchers.Main) {
                 try {
                     if (response.isSuccessful) {

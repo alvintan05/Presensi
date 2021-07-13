@@ -18,16 +18,33 @@ interface AzureRequest {
         @Path(value = "personGroupId") personGroupId: String
     ): Response<TrainingResponse>
 
+//    @Headers("Content-type: application/octet-stream")
+//    @POST("detect")
+//    suspend fun detectFace(@Body body: RequestBody): Response<List<FaceDetectResponse>>
+
     @Headers("Content-type: application/octet-stream")
     @POST("detect")
-    suspend fun detectFace(@Body body: RequestBody): Response<List<FaceDetectResponse>>
+    suspend fun detectFace(
+        @Body body: RequestBody,
+        @Query("detectionModel") model: String = "detection_01",
+        @Query("recognitionModel") recogModel: String = "recognition_04"
+    ): Response<List<FaceDetectResponse>>
+
+//    @Headers("Content-type: application/octet-stream")
+//    @POST("persongroups/{personGroupId}/persons/{personId}/persistedFaces")
+//    suspend fun addFaceToPerson(
+//        @Path(value = "personGroupId") personGroupId: String,
+//        @Path(value = "personId") personId: String,
+//        @Body body: RequestBody
+//    ): Response<AddFaceResponse>
 
     @Headers("Content-type: application/octet-stream")
     @POST("persongroups/{personGroupId}/persons/{personId}/persistedFaces")
     suspend fun addFaceToPerson(
+        @Body body: RequestBody,
         @Path(value = "personGroupId") personGroupId: String,
         @Path(value = "personId") personId: String,
-        @Body body: RequestBody
+        @Query("detectionModel") model: String = "detection_01"
     ): Response<AddFaceResponse>
 
     @Headers("Content-type: application/json")
