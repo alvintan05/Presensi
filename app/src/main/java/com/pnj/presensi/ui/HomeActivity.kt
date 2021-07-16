@@ -31,6 +31,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var service: ApiRequest
     private var datangStatus = false
     private var pulangStatus = false
+    private var lokasiKerja = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +53,7 @@ class HomeActivity : AppCompatActivity() {
                 Toast.makeText(this, "Anda sudah melakukan presensi datang", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                showDialog("datang")
+                showDialog("datang", !lokasiKerja.isEmpty())
             }
         }
 
@@ -61,7 +62,7 @@ class HomeActivity : AppCompatActivity() {
                 Toast.makeText(this, "Anda sudah melakukan presensi pulang", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                showDialog("pulang")
+                showDialog("pulang", !lokasiKerja.isEmpty())
             }
         }
 
@@ -95,8 +96,14 @@ class HomeActivity : AppCompatActivity() {
         checkTodayPresensi()
     }
 
-    private fun showDialog(jenis: String) {
-        val items = arrayOf("WFO", "WFH")
+    private fun showDialog(jenis: String, statusJenis: Boolean) {
+
+        val items: Array<String> = if (statusJenis) {
+            arrayOf(lokasiKerja)
+        } else {
+            arrayOf("WFO", "WFH")
+        }
+
         val builder = AlertDialog.Builder(this)
 
         with(builder) {
@@ -175,7 +182,14 @@ class HomeActivity : AppCompatActivity() {
     private fun updateViewFromData(status: Boolean, data: Presensi) {
         binding.tvDatang.text = "Datang"
         binding.tvPulang.text = "Pulang"
+        binding.tvLokasiDatang.text = ""
+        binding.tvLokasiPulang.text = ""
+        binding.ivDatangNo.visibility = View.VISIBLE
+        binding.ivPulangNo.visibility = View.VISIBLE
+        lokasiKerja = ""
+
         if (status) {
+            lokasiKerja = data.lokasiKerja.toString()
             if (data.jamDatang != null && data.jamPulang != null) {
                 binding.ivDatangNo.visibility = View.GONE
                 binding.ivPulangNo.visibility = View.GONE
