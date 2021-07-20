@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
@@ -112,6 +113,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
     @SuppressLint("MissingPermission")
     private fun checkMyLocation() {
         if (isLocationEnabled()) {
+
             // this function for receiving last saved location on user devices
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                 if (location == null) {
@@ -119,19 +121,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
                     requestNewLocationData()
                 } else {
                     this.location = location
-                    Log.d(
-                        TAG,
-                        "locationTask: Location ada Latitude: ${location.latitude} Longitude: ${location.longitude}"
-                    )
-                    mMap.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            LatLng(
-                                location.latitude,
-                                location.longitude
-                            ), 16f
+                    // checking fake gps
+                    if (!checkMockLocations() && !isLocationPlausible(location)) {
+                        buildAlertMessage(getString(R.string.dialog_fake_gps_detected), false)
+                    } else {
+                        Log.d(
+                            TAG,
+                            "locationTask: Location ada Latitude: ${location.latitude} Longitude: ${location.longitude}"
                         )
-                    )
-                    binding.btnCheckLocation.visibility = View.VISIBLE
+                        mMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(
+                                    location.latitude,
+                                    location.longitude
+                                ), 16f
+                            )
+                        )
+                        binding.btnCheckLocation.visibility = View.VISIBLE
+                    }
                 }
             }
         } else {
@@ -141,7 +148,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
     }
 
     // method to check
-    // if location is enabled
+// if location is enabled
     private fun isLocationEnabled(): Boolean {
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
@@ -167,20 +174,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
     private val mLocationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             location = locationResult.lastLocation
-            Log.d(
-                TAG,
-                "onLocationResult: lokasi didapatkan Latitude: ${location.latitude} Longitude: ${location.longitude}"
-            )
-            mMap.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    LatLng(
-                        location.latitude,
-                        location.longitude
-                    ), 16f
+
+            // Checking fake GPS
+            if (!checkMockLocations() && !isLocationPlausible(location)) {
+                buildAlertMessage(getString(R.string.dialog_fake_gps_detected), false)
+            } else {
+                Log.d(
+                    TAG,
+                    "onLocationResult: lokasi didapatkan Latitude: ${location.latitude} Longitude: ${location.longitude}"
                 )
-            )
-            binding.btnCheckLocation.visibility = View.VISIBLE
-            //checkForGeoFenceEntry(location, marker.latitude, marker.longitude, 259.0)
+                mMap.animateCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        LatLng(
+                            location.latitude,
+                            location.longitude
+                        ), 16f
+                    )
+                )
+                binding.btnCheckLocation.visibility = View.VISIBLE
+            }
             //stopLocationUpdates()
         }
     }
@@ -220,11 +232,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
 
 //        val markerInside = MarkerOptions().position(LatLng(-6.344941, 106.869003))
 //        mMap.addMarker(markerInside)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        stopLocationUpdates()
     }
 
     private fun checkForGeoFenceEntry(
@@ -267,7 +274,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
     }
 
     private fun buildAlertMessage(message: String, status: Boolean) {
-        //stopLocationUpdates()
+        stopLocationUpdates()
         val binding = CustomAlertDialogBinding.inflate(LayoutInflater.from(this))
         val builder = AlertDialog.Builder(this).apply {
             setCancelable(false)
@@ -287,6 +294,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
                 intentWithData()
             } else {
                 dialog.dismiss()
+                finish()
             }
         }
     }
@@ -316,8 +324,44 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
         finish()
     }
 
+    private fun checkMockLocations(): Boolean {
+        // Starting with API level >= 18 we can (partially) rely on .isFromMockProvider()
+        // (http://developer.android.com/reference/android/location/Location.html#isFromMockProvider%28%29)
+        // For API level < 18 we have to check the Settings.Secure flag
+        @Suppress("DEPRECATION")
+        (return Build.VERSION.SDK_INT < 18 && Settings.Secure.getString(
+            this.contentResolver,
+            Settings.Secure.ALLOW_MOCK_LOCATION
+        ) != "0")
+
+    }
+
+    private fun isLocationPlausible(location: Location?): Boolean {
+        var lastMockLocation: Location? = null
+        if (location == null) return false
+
+        val isMock =
+            checkMockLocations() || Build.VERSION.SDK_INT >= 18 && location.isFromMockProvider
+
+        if (isMock) {
+            lastMockLocation = location
+        }
+
+        // If there's nothing to compare against, we have to trust it
+        if (lastMockLocation == null) return true
+
+        // And finally, if it's more than 1km away from the last known mock, we'll trust it
+        val d = location.distanceTo(lastMockLocation).toDouble()
+        return d > 1000
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopLocationUpdates()
     }
 }
