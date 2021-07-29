@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.PictureResult
 import com.pnj.presensi.R
@@ -288,6 +289,49 @@ class FaceRecognitionActivity : AppCompatActivity() {
         }
     }
 
+    private fun addPresensiDatangSatpam() {
+        val progressDialog = Common.createProgressDialog(this)
+        progressDialog.show()
+        CoroutineScope(Dispatchers.IO).launch {
+            val idPegawai = PresensiDataStore(this@FaceRecognitionActivity).getIdPegawai()
+            val response = service.recordPresensiDatangSatpam(idPegawai, jam, lokasiKerja)
+            withContext(Dispatchers.Main) {
+                try {
+                    if (response.isSuccessful) {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@FaceRecognitionActivity,
+                            "Anda Berhasil Melakukan Presensi Datang",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        finish()
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@FaceRecognitionActivity,
+                            "Error: ${response.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } catch (e: HttpException) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@FaceRecognitionActivity,
+                        "Exception ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } catch (e: Throwable) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@FaceRecognitionActivity,
+                        "Something else went wrong",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
     /*
     * 1 = success recognize face
     * 2 = fail detect face
@@ -334,7 +378,16 @@ class FaceRecognitionActivity : AppCompatActivity() {
             when (statusCode) {
                 1 -> {
                     if (jenis == "datang") {
-                        addPresensiDatang()
+                        var unsurId = 0;
+                        lifecycleScope.launch {
+                            unsurId = PresensiDataStore(this@FaceRecognitionActivity).getUnsur()
+                        }
+
+                        if (unsurId == 3) {
+                            addPresensiDatangSatpam()
+                        } else {
+                            addPresensiDatang()
+                        }
                     } else if (jenis == "pulang") {
                         intentWithData(true)
                     }

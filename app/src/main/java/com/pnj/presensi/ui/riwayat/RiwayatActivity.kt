@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pnj.presensi.R
 import com.pnj.presensi.databinding.ActivityRiwayatBinding
+import com.pnj.presensi.entity.presensi.ListPresensiResponse
 import com.pnj.presensi.entity.presensi.Presensi
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
@@ -22,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import retrofit2.Response
 import java.text.DateFormatSymbols
 import java.util.*
 
@@ -154,7 +156,16 @@ class RiwayatActivity : AppCompatActivity() {
         progressDialog.show()
         CoroutineScope(Dispatchers.IO).launch {
             val idPegawai = PresensiDataStore(this@RiwayatActivity).getIdPegawai()
-            val response = service.getPresensiByMonth(month, year, idPegawai)
+            val unsurId = PresensiDataStore(this@RiwayatActivity).getUnsur()
+            var response: Response<ListPresensiResponse>;
+            if (unsurId == 3) {
+                response =
+                    service.getPresensiSatpamByMonth(month, year, idPegawai)
+            } else {
+                response =
+                    service.getPresensiByMonth(month, year, idPegawai)
+            }
+
             withContext(Dispatchers.Main) {
                 try {
                     if (response.isSuccessful) {
@@ -162,6 +173,7 @@ class RiwayatActivity : AppCompatActivity() {
                         val presensiResponse = response.body()
                         if (presensiResponse?.status == Status.SUCCESS.toString()) {
                             adapter.setList(presensiResponse.data)
+                            adapter.setIdUnsur(unsurId)
                             adapter.notifyDataSetChanged()
                             binding.rvPresensi.visibility = View.VISIBLE
                             binding.tvInfo.visibility = View.GONE

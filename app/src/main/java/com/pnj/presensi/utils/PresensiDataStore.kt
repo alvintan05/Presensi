@@ -19,6 +19,7 @@ class PresensiDataStore(private val context: Context) {
         private val nipKey = stringPreferencesKey("NIP")
         private val namaKey = stringPreferencesKey("Nama")
         private val bagianKey = stringPreferencesKey("Bagian")
+        private val unsurKey = intPreferencesKey("Unsur")
         private val personIdKey = stringPreferencesKey("PersonId")
     }
 
@@ -29,6 +30,7 @@ class PresensiDataStore(private val context: Context) {
             settings[nipKey] = pegawai.nip
             settings[namaKey] = pegawai.nama
             settings[bagianKey] = pegawai.namaBagian
+            settings[unsurKey] = pegawai.idUnsur
         }
     }
 
@@ -77,6 +79,13 @@ class PresensiDataStore(private val context: Context) {
             preferences[nipKey] ?: ""
         }
         return nipFlow.first()
+    }
+
+    suspend fun getUnsur(): Int {
+        val unsurFlow: Flow<Int> = context.dataStore.data.map { preferences ->
+            preferences[unsurKey] ?: 0
+        }
+        return unsurFlow.first()
     }
 
     suspend fun getPersonId(): String {

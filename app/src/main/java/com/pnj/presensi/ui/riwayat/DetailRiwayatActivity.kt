@@ -2,8 +2,11 @@ package com.pnj.presensi.ui.riwayat
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.pnj.presensi.databinding.ActivityDetailRiwayatBinding
 import com.pnj.presensi.entity.presensi.Presensi
+import com.pnj.presensi.utils.PresensiDataStore
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -26,7 +29,23 @@ class DetailRiwayatActivity : AppCompatActivity() {
     }
 
     private fun setUpViewWithData(presensi: Presensi) {
-        binding.tvTanggal.text = presensi.tanggal?.let { convertDate(it) }
+        var idUnsur = 0;
+        lifecycleScope.launch {
+            idUnsur = PresensiDataStore(this@DetailRiwayatActivity).getUnsur()
+        }
+
+        if (idUnsur != 0 && idUnsur == 3) {
+            if (presensi.idPresensiPulang != presensi.idPresensi) {
+                val tanggalList = presensi.tanggal?.split(" / ")?.toTypedArray()
+                val tanggalConvert = "${tanggalList?.get(0)?.let { convertDate(it) }} - " +
+                        "${tanggalList?.get(1)?.let { convertDate(it) }}"
+                binding.tvTanggal.text = tanggalConvert
+            } else {
+                binding.tvTanggal.text = presensi.tanggal?.let { convertDate(it) }
+            }
+        } else {
+            binding.tvTanggal.text = presensi.tanggal?.let { convertDate(it) }
+        }
         binding.tvLokasi.text = presensi.lokasiKerja
         binding.tvDatang.text = presensi.jamDatang
         binding.tvPulang.text = presensi.jamPulang

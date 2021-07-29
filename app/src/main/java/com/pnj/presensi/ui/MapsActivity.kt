@@ -50,9 +50,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
     private val RC_LOCATION_PERM = 123
     private val RC_LOCATION_SETTING = 0
 
-    private val marker = LatLng(-6.371450, 106.824392) // pnj
+    //private val marker = LatLng(-6.371450, 106.824392) // pnj
     private val radius = 259.0
-    //private val marker = LatLng(-6.345355, 106.868694) //rumah
+    private val marker = LatLng(-6.345355, 106.868694) //rumah
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

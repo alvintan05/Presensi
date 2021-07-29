@@ -3,6 +3,7 @@ package com.pnj.presensi.ui
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.pnj.presensi.databinding.ActivityAktivitasBinding
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
@@ -20,6 +21,7 @@ class AktivitasActivity : AppCompatActivity() {
     private lateinit var service: ApiRequest
     private lateinit var lokasiKerja: String //WFO atau WFH
     private lateinit var jam: String
+    private var unsurId = 0;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +40,15 @@ class AktivitasActivity : AppCompatActivity() {
         lokasiKerja = bundle?.getString("lokasi_kerja") ?: ""
 
         binding.btnSend.setOnClickListener {
-            addPresensiPulang()
+            lifecycleScope.launch {
+                unsurId = PresensiDataStore(this@AktivitasActivity).getUnsur()
+            }
+
+            if (unsurId == 3) {
+                addPresensiPulangSatpam()
+            } else {
+                addPresensiPulang()
+            }
         }
     }
 
@@ -49,6 +59,50 @@ class AktivitasActivity : AppCompatActivity() {
             val idPegawai = PresensiDataStore(this@AktivitasActivity).getIdPegawai()
             val aktivitas = binding.edtAktivitas.text.toString().trim()
             val response = service.recordPresensiPulang(idPegawai, jam, lokasiKerja, aktivitas)
+            withContext(Dispatchers.Main) {
+                try {
+                    if (response.isSuccessful) {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@AktivitasActivity,
+                            "Anda Berhasil Melakukan Presensi Pulang",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        finish()
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@AktivitasActivity,
+                            "Error: ${response.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } catch (e: HttpException) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@AktivitasActivity,
+                        "Exception ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } catch (e: Throwable) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@AktivitasActivity,
+                        "Something else went wrong",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun addPresensiPulangSatpam() {
+        val progressDialog = Common.createProgressDialog(this)
+        progressDialog.show()
+        CoroutineScope(Dispatchers.IO).launch {
+            val idPegawai = PresensiDataStore(this@AktivitasActivity).getIdPegawai()
+            val aktivitas = binding.edtAktivitas.text.toString().trim()
+            val response = service.recordPresensiPulangSatpam(idPegawai, jam, lokasiKerja, aktivitas)
             withContext(Dispatchers.Main) {
                 try {
                     if (response.isSuccessful) {

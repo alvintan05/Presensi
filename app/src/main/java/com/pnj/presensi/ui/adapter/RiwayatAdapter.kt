@@ -13,6 +13,7 @@ import kotlin.collections.ArrayList
 
 class RiwayatAdapter : RecyclerView.Adapter<RiwayatAdapter.ViewHolder>() {
 
+    private var idUnsur = 0;
     private var listPresensi: List<Presensi> = ArrayList()
     private var mOnItemClickListener: OnItemClickListener? = null
 
@@ -22,6 +23,10 @@ class RiwayatAdapter : RecyclerView.Adapter<RiwayatAdapter.ViewHolder>() {
 
     fun setOnClick(onItemClickListener: OnItemClickListener) {
         mOnItemClickListener = onItemClickListener
+    }
+
+    fun setIdUnsur(idUnsur: Int) {
+        this.idUnsur = idUnsur
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,7 +39,19 @@ class RiwayatAdapter : RecyclerView.Adapter<RiwayatAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder) {
             with(listPresensi[position]) {
-                binding.tvDate.text = this.tanggal?.let { convertDate(it) }
+                if (idUnsur != 0 && idUnsur == 3) {
+                    if (this.idPresensiPulang != this.idPresensi) {
+                        val tanggalList = this.tanggal?.split(" / ")?.toTypedArray()
+                        val tanggalConvert = "${tanggalList?.get(0)?.let { convertDate(it) }} - " +
+                                "${tanggalList?.get(1)?.let { convertDate(it) }}"
+                        binding.tvDate.text = tanggalConvert
+                    } else {
+                        binding.tvDate.text = this.tanggal?.let { convertDate(it) }
+                    }
+                } else {
+                    binding.tvDate.text = this.tanggal?.let { convertDate(it) }
+                }
+
                 binding.tvJamDatang.text = this.jamDatang
                 binding.tvJamPulang.text = this.jamPulang
                 binding.tvLokasi.text = this.lokasiKerja

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.pnj.presensi.databinding.ActivityHomeBinding
 import com.pnj.presensi.entity.presensi.Presensi
+import com.pnj.presensi.entity.presensi.PresensiResponse
 import com.pnj.presensi.network.ApiRequest
 import com.pnj.presensi.network.RetrofitServer
 import com.pnj.presensi.ui.face_recognition.FaceRecognitionActivity
@@ -22,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,6 +34,7 @@ class HomeActivity : AppCompatActivity() {
     private var datangStatus = false
     private var pulangStatus = false
     private var lokasiKerja = ""
+    private var unsurId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +47,7 @@ class HomeActivity : AppCompatActivity() {
         lifecycleScope.launch {
             binding.tvName.text = PresensiDataStore(this@HomeActivity).getName()
             binding.tvUnit.text = PresensiDataStore(this@HomeActivity).getBagian()
+            unsurId = PresensiDataStore(this@HomeActivity).getUnsur()
         }
 
         binding.tvDate.text = getTodayDate()
@@ -53,7 +57,19 @@ class HomeActivity : AppCompatActivity() {
                 Toast.makeText(this, "Anda sudah melakukan presensi datang", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                showDialog("datang", !lokasiKerja.isEmpty())
+                if (unsurId == 1) {
+                    showDialog("datang", !lokasiKerja.isEmpty())
+                } else {
+                    val bundle = Bundle()
+                    val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                    bundle.putString("lokasi_kerja", "WFO")
+                    bundle.putString("jam", sdf.format(Calendar.getInstance().time))
+                    bundle.putString("jenis", "datang")
+
+                    val intent = Intent(this@HomeActivity, MapsActivity::class.java)
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                }
             }
         }
 
@@ -62,7 +78,19 @@ class HomeActivity : AppCompatActivity() {
                 Toast.makeText(this, "Anda sudah melakukan presensi pulang", Toast.LENGTH_SHORT)
                     .show()
             } else {
-                showDialog("pulang", !lokasiKerja.isEmpty())
+                if (unsurId == 1) {
+                    showDialog("pulang", !lokasiKerja.isEmpty())
+                } else {
+                    val bundle = Bundle()
+                    val sdf = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                    bundle.putString("lokasi_kerja", "WFO")
+                    bundle.putString("jam", sdf.format(Calendar.getInstance().time))
+                    bundle.putString("jenis", "pulang")
+
+                    val intent = Intent(this@HomeActivity, MapsActivity::class.java)
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                }
             }
         }
 
@@ -140,8 +168,15 @@ class HomeActivity : AppCompatActivity() {
         val progressDialog = Common.createProgressDialog(this)
         progressDialog.show()
         CoroutineScope(Dispatchers.IO).launch {
-            val response =
-                service.getTodayPresensi(PresensiDataStore(this@HomeActivity).getIdPegawai())
+            val unsurId = PresensiDataStore(this@HomeActivity).getUnsur()
+            var response: Response<PresensiResponse>;
+            if (unsurId == 3) {
+                response =
+                    service.getTodayPresensiSatpam(PresensiDataStore(this@HomeActivity).getIdPegawai())
+            } else {
+                response =
+                    service.getTodayPresensi(PresensiDataStore(this@HomeActivity).getIdPegawai())
+            }
             withContext(Dispatchers.Main) {
                 try {
                     if (response.isSuccessful) {

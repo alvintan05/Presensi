@@ -59,7 +59,7 @@
                     android:id="@+id/tv_jam_datang"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
+                    android:layout_weight="0.7"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     tools:text="07:30:30" />
@@ -85,7 +85,7 @@
                     android:id="@+id/tv_jam_pulang"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
+                    android:layout_weight="0.7"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     tools:text="07:30:30" />

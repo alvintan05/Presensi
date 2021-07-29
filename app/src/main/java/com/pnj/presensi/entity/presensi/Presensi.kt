@@ -5,6 +5,7 @@ import android.os.Parcelable
 
 data class Presensi(
     val idPresensi: Int,
+    val idPresensiPulang: Int? = 0,
     val idPegawai: Int,
     val tanggal: String?,
     val jamDatang: String?,
@@ -14,6 +15,7 @@ data class Presensi(
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
+        parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
@@ -25,6 +27,7 @@ data class Presensi(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(idPresensi)
+        parcel.writeValue(idPresensiPulang)
         parcel.writeInt(idPegawai)
         parcel.writeString(tanggal)
         parcel.writeString(jamDatang)

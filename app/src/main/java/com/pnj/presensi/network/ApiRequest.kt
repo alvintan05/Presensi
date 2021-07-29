@@ -7,6 +7,7 @@ import com.pnj.presensi.entity.presensi.Presensi
 import com.pnj.presensi.entity.presensi.PresensiResponse
 import retrofit2.Response
 import retrofit2.http.*
+
 interface ApiRequest {
 
     @FormUrlEncoded
@@ -25,6 +26,14 @@ interface ApiRequest {
     ): Response<Presensi>
 
     @FormUrlEncoded
+    @POST("presensi/datang/satpam")
+    suspend fun recordPresensiDatangSatpam(
+        @Field(value = "id_pegawai") idPegawai: Int,
+        @Field(value = "jam_datang") jamDatang: String,
+        @Field(value = "lokasi_kerja") lokasiKerja: String
+    ): Response<Void>
+
+    @FormUrlEncoded
     @POST("presensi/pulang")
     suspend fun recordPresensiPulang(
         @Field("id_pegawai") idPegawai: Int,
@@ -32,6 +41,16 @@ interface ApiRequest {
         @Field("lokasi_kerja") lokasiKerja: String,
         @Field("aktivitas") aktivitas: String
     ): Response<Presensi>
+
+    @FormUrlEncoded
+    @POST("presensi/pulang/satpam")
+    suspend fun recordPresensiPulangSatpam(
+        @Field("id_pegawai") idPegawai: Int,
+        @Field("jam_pulang") jamPulang: String,
+        @Field("lokasi_kerja") lokasiKerja: String,
+        @Field("aktivitas") aktivitas: String
+    ): Response<Void>
+
 
     @FormUrlEncoded
     @POST("account/check")
@@ -43,12 +62,22 @@ interface ApiRequest {
     @GET("presensi/today")
     suspend fun getTodayPresensi(@Query("id_pegawai") idPegawai: Int): Response<PresensiResponse>
 
+    @GET("presensi/today/satpam")
+    suspend fun getTodayPresensiSatpam(@Query("id_pegawai") idPegawai: Int): Response<PresensiResponse>
+
     @GET("presensi/month")
     suspend fun getPresensiByMonth(
         @Query("month") month: Int,
-        @Query("year") year:String,
+        @Query("year") year: String,
         @Query("id_pegawai") idPegawai: Int
-    ) : Response<ListPresensiResponse>
+    ): Response<ListPresensiResponse>
+
+    @GET("presensi/month/satpam")
+    suspend fun getPresensiSatpamByMonth(
+        @Query("month") month: Int,
+        @Query("year") year: String,
+        @Query("id_pegawai") idPegawai: Int
+    ): Response<ListPresensiResponse>
 
     @GET("pegawai/search")
     suspend fun getPegawaiData(@Query("id_pegawai") idPegawai: Int): Response<Pegawai>
