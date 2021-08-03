@@ -145,23 +145,38 @@ class LoginActivity : AppCompatActivity() {
                             if (person.persistedFaceIds.isEmpty()) {
                                 //apabila tidak ada face di person
                                 PresensiDataStore(this@LoginActivity).savePersonId(person.personId)
-                                val intent = Intent(this@LoginActivity, RecordFaceActivity::class.java)
+                                val intent =
+                                    Intent(this@LoginActivity, RecordFaceActivity::class.java)
                                 intent.putExtra("person", true)
+                                intent.putExtra("face", false)
+                                intent.putExtra("record", 0)
                                 startActivity(intent)
                                 finish()
                             } else {
-                                //apabila data lengkap
-                                PresensiDataStore(this@LoginActivity).savePersonIdAndFaceSession(
-                                    person.personId,
-                                    true
-                                )
-                                startActivity(
-                                    Intent(
-                                        this@LoginActivity,
-                                        HomeActivity::class.java
+                                if (person.persistedFaceIds.size < 3) {
+                                    val size = person.persistedFaceIds.size
+                                    PresensiDataStore(this@LoginActivity).savePersonId(person.personId)
+                                    val intent =
+                                        Intent(this@LoginActivity, RecordFaceActivity::class.java)
+                                    intent.putExtra("person", true)
+                                    intent.putExtra("face", true)
+                                    intent.putExtra("record", size)
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    //apabila data lengkap
+                                    PresensiDataStore(this@LoginActivity).savePersonIdAndFaceSession(
+                                        person.personId,
+                                        true
                                     )
-                                )
-                                finish()
+                                    startActivity(
+                                        Intent(
+                                            this@LoginActivity,
+                                            HomeActivity::class.java
+                                        )
+                                    )
+                                    finish()
+                                }
                             }
                         } else {
                             //apabila tidak ada person group person
@@ -172,6 +187,8 @@ class LoginActivity : AppCompatActivity() {
                             ).show()
                             val intent = Intent(this@LoginActivity, RecordFaceActivity::class.java)
                             intent.putExtra("person", false)
+                            intent.putExtra("face", false)
+                            intent.putExtra("record", 0)
                             startActivity(intent)
                             finish()
                         }

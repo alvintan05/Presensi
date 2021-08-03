@@ -1,6 +1,5 @@
 package com.pnj.presensi.ui.face_recognition
 
-import android.Manifest
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
@@ -8,12 +7,16 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Environment
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.JsonObject
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.PictureResult
 import com.pnj.presensi.R
+import com.pnj.presensi.databinding.CustomAlertInstructionBinding
+import com.pnj.presensi.databinding.CustomAlertRecordFaceBinding
 import com.pnj.presensi.databinding.LayoutCameraBinding
 import com.pnj.presensi.entity.azure.FaceRectangle
 import com.pnj.presensi.network.AzureRequest
@@ -21,14 +24,10 @@ import com.pnj.presensi.network.RetrofitServer
 import com.pnj.presensi.ui.HomeActivity
 import com.pnj.presensi.utils.Common
 import com.pnj.presensi.utils.PresensiDataStore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okio.BufferedSink
-import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.HttpException
 import java.io.*
 import java.text.SimpleDateFormat
@@ -40,6 +39,9 @@ class RecordFaceActivity : AppCompatActivity() {
     private lateinit var serviceAzure: AzureRequest
     private lateinit var progressDialog: ProgressDialog
     private var isManage = false
+    private var isFaceRecorded = false
+    private var totalFaces = 0
+    private var recordFaces = 0
 
     private lateinit var outputStream: FileOutputStream
     //    private val RC_STORAGE_PERM = 1
@@ -63,6 +65,8 @@ class RecordFaceActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Tambah Data Wajah"
 
+        binding.tvDataWajah.visibility = View.VISIBLE
+
         binding.camera.addCameraListener(object : CameraListener() {
             override fun onPictureTaken(result: PictureResult) {
                 result.toBitmap { bitmap ->
@@ -81,11 +85,36 @@ class RecordFaceActivity : AppCompatActivity() {
             binding.camera.takePicture()
         }
 
+        val isFromSplash = intent.getBooleanExtra("fromSplash", false)
         val isPersonCreated = intent.getBooleanExtra("person", false)
+        isFaceRecorded = intent.getBooleanExtra("face", false)
+        recordFaces = intent.getIntExtra("record", 0)
         isManage = intent.getBooleanExtra("manage", false)
 
         if (!isPersonCreated) {
             createPersonGroupPerson()
+        } else {
+            getFaceList()
+            if (isManage) {
+                showDialogInstruction()
+            } else {
+                if (isFaceRecorded) {
+                    // sudah ada record
+                    if (recordFaces < 3) {
+                        showDialogRecord(getString(R.string.dialog_face_record_not_complete))
+                    } else {
+                        if (recordFaces >= 3 && isFromSplash) {
+                            trainPersonGroup()
+                        } else {
+                            // record lebih atau sama dengan 3
+                            showDialogInstruction()
+                        }
+                    }
+                } else {
+                    // masih kosong face nya
+                    showDialogRecord(getString(R.string.dialog_no_face_record))
+                }
+            }
         }
     }
 
@@ -123,6 +152,8 @@ class RecordFaceActivity : AppCompatActivity() {
                                 "Success create person",
                                 Toast.LENGTH_SHORT
                             ).show()
+
+                            showDialogRecord(getString(R.string.dialog_no_face_record))
                         }
                     } else {
                         progressDialog.dismiss()
@@ -227,12 +258,13 @@ class RecordFaceActivity : AppCompatActivity() {
                 try {
                     if (response.isSuccessful) {
                         progressDialog.dismiss()
-                        val responseData = response.body()
                         Toast.makeText(
                             this@RecordFaceActivity,
                             "Wajah berhasil ditambahkan",
                             Toast.LENGTH_SHORT
                         ).show()
+                        getFaceList()
+                        recordFaces++
                         showDialog()
                     } else {
                         progressDialog.dismiss()
@@ -261,19 +293,117 @@ class RecordFaceActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage("Apakah anda ingin menambahkan wajah lagi?")
-
-        builder.setPositiveButton("Iya") { dialog, which ->
-            dialog.dismiss()
+    private fun getFaceList() {
+        progressDialog.show()
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = serviceAzure.getPersonFaceList(
+                "pegawai",
+                PresensiDataStore(this@RecordFaceActivity).getPersonId()
+            )
+            withContext(Dispatchers.Main) {
+                try {
+                    if (response.isSuccessful) {
+                        progressDialog.dismiss()
+                        val responseData = response.body()
+                        if (responseData != null) {
+                            totalFaces = responseData.persistedFaceIds.size
+                            binding.tvDataWajah.text = "Data Wajah Saat Ini: $totalFaces"
+                        }
+                    } else {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@RecordFaceActivity,
+                            "Error: ${response.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } catch (e: HttpException) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@RecordFaceActivity,
+                        "Exception ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } catch (e: Throwable) {
+                    progressDialog.dismiss()
+                    Toast.makeText(
+                        this@RecordFaceActivity,
+                        "Something else went wrong",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
+    }
 
-        builder.setNegativeButton("Tidak") { dialog, which ->
-            trainPersonGroup()
+    private fun showDialog() {
+        val builder = AlertDialog.Builder(this@RecordFaceActivity)
+        builder.setCancelable(false)
+
+        if (isManage) {
+            builder.setMessage("Apakah anda ingin menambahkan wajah lagi?")
+
+            builder.setPositiveButton("Iya") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            builder.setNegativeButton("Tidak") { dialog, which ->
+                trainPersonGroup()
+            }
+        } else {
+            if (recordFaces < 3) {
+                builder.setMessage("Data wajah berhasil disimpan. Lakukan penambahan minimal 3 kali")
+
+                builder.setPositiveButton("Lanjutkan") { dialog, which ->
+                    dialog.dismiss()
+                }
+            } else {
+                builder.setMessage("Apakah anda ingin menambahkan wajah lagi?")
+
+                builder.setPositiveButton("Iya") { dialog, which ->
+                    dialog.dismiss()
+                }
+
+                builder.setNegativeButton("Tidak") { dialog, which ->
+                    trainPersonGroup()
+                }
+            }
         }
 
         builder.show()
+    }
+
+    private fun showDialogRecord(message: String) {
+        val binding = CustomAlertRecordFaceBinding.inflate(LayoutInflater.from(this))
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this).apply {
+            setCancelable(false)
+            setView(binding.root)
+        }
+
+        binding.tvTitle.text = message
+
+        val dialog: androidx.appcompat.app.AlertDialog = builder.create()
+        dialog.show()
+
+        binding.btnDialog.setOnClickListener {
+            dialog.dismiss()
+            showDialogInstruction()
+        }
+    }
+
+    private fun showDialogInstruction() {
+        val binding = CustomAlertInstructionBinding.inflate(LayoutInflater.from(this))
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this).apply {
+            setCancelable(false)
+            setView(binding.root)
+        }
+
+        val dialog: androidx.appcompat.app.AlertDialog = builder.create()
+        dialog.show()
+
+        binding.btnDialog.setOnClickListener {
+            dialog.dismiss()
+        }
     }
 
     private fun trainPersonGroup() {
@@ -385,7 +515,7 @@ class RecordFaceActivity : AppCompatActivity() {
         ).format(System.currentTimeMillis())
 
         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size);
-        val imageFile =  File("${filepath.absolutePath}/presensi/")
+        val imageFile = File("${filepath.absolutePath}/presensi/")
         imageFile.mkdir()
 
         val file = File(imageFile, "$format.png")

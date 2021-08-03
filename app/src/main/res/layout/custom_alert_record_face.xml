@@ -12,22 +12,11 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/iv_error"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_error_red"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
             android:id="@+id/iv_success"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/ic_check_green"
+            android:src="@drawable/ic_camera_green"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -46,14 +35,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/iv_error"
-            tools:text="@string/dialog_at_pnj" />
+            tools:text="Anda Belum Melakukan Swafoto Wajah\nTekan Tombol Rekam Wajah Untuk Melanjutkan" />
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
             android:id="@+id/btn_dialog"
             app:cornerRadius="10dp"
             app:backgroundTint="@color/secondary"
-            android:text="Lanjutkan"
+            android:text="Rekam Wajah"
             android:layout_marginTop="16dp"
             android:layout_height="55dp"
             android:layout_marginStart="8dp"

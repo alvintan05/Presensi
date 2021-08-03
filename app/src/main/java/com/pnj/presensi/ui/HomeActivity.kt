@@ -2,6 +2,7 @@ package com.pnj.presensi.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -106,6 +107,7 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, RecordFaceActivity::class.java)
             intent.putExtra("manage", true)
             intent.putExtra("person", true)
+            intent.putExtra("face", true)
             startActivity(intent)
         }
 

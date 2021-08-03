@@ -1,5 +1,6 @@
 package com.pnj.presensi.network
 
+import android.app.Person
 import com.google.gson.JsonObject
 import com.pnj.presensi.entity.azure.*
 import okhttp3.RequestBody
@@ -17,6 +18,12 @@ interface AzureRequest {
     suspend fun getTrainingPersonGroupStatus(
         @Path(value = "personGroupId") personGroupId: String
     ): Response<TrainingResponse>
+
+    @GET("persongroups/{personGroupId}/persons/{personId}")
+    suspend fun getPersonFaceList(
+        @Path(value = "personGroupId") personGroupId: String,
+        @Path(value = "personId") personId: String,
+    ): Response<PersonGroupPerson>
 
 //    @Headers("Content-type: application/octet-stream")
 //    @POST("detect")

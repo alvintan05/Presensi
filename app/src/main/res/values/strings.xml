@@ -9,6 +9,9 @@
     <string name="title_activity_maps2">Map</string>
     <string name="app_title">E-PRESENSI\nPOLITEKNIK NEGERI JAKARTA</string>
 
+    <string name="dialog_no_face_record">Anda Belum Melakukan Swafoto Wajah.\nTekan Tombol Rekam Wajah Untuk Melanjutkan</string>
+    <string name="dialog_face_record_not_complete">Jumlah Swafoto Wajah Belum Terpenuhi.\nTekan Tombol Rekam Wajah Untuk Melanjutkan Dan Lakukan Minimal 3 Kali</string>
+
     <string name="dialog_no_gps">GPS anda tidak menyala, apakah ingin menyalakan GPS?</string>
     <string name="dialog_at_pnj">Anda berada di area PNJ\nAnda dapat melanjutkan ke tahap pemeriksaan berikutnya.</string>
     <string name="dialog_outside_pnj">Anda tidak berada di area PNJ\nSilahkan ulangi proses presensi saat berada di PNJ.</string>

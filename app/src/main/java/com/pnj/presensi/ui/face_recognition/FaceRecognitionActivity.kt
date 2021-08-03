@@ -17,6 +17,7 @@ import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.PictureResult
 import com.pnj.presensi.R
 import com.pnj.presensi.databinding.CustomAlertDialogBinding
+import com.pnj.presensi.databinding.CustomAlertInstructionBinding
 import com.pnj.presensi.databinding.LayoutCameraBinding
 import com.pnj.presensi.entity.azure.VerifyBodyRequest
 import com.pnj.presensi.network.ApiRequest
@@ -96,6 +97,8 @@ class FaceRecognitionActivity : AppCompatActivity() {
         binding.fabPicture.setOnClickListener {
             binding.camera.takePicture()
         }
+
+        showDialogInstruction()
 
     }
 
@@ -227,6 +230,22 @@ class FaceRecognitionActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun showDialogInstruction() {
+        val binding = CustomAlertInstructionBinding.inflate(LayoutInflater.from(this))
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this).apply {
+            setCancelable(false)
+            setView(binding.root)
+        }
+
+        val dialog: androidx.appcompat.app.AlertDialog = builder.create()
+        dialog.show()
+
+        binding.btnDialog.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+
 
     private fun intentWithData(isSuccess: Boolean) {
         val bundle = Bundle()
