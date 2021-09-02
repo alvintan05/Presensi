@@ -50,9 +50,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
     private val RC_LOCATION_PERM = 123
     private val RC_LOCATION_SETTING = 0
 
-    //private val marker = LatLng(-6.371450, 106.824392) // pnj
+    private val marker = LatLng(-6.371450, 106.824392) // pnj
     private val radius = 259.0
-    private val marker = LatLng(-6.345355, 106.868694) //rumah
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -227,11 +226,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, EasyPermissions.Pe
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker, 16F))
         addCircle(marker)
         enableMyLocation()
-//        val markerOutside = MarkerOptions().position(LatLng(-6.339954, 106.870418))
-//        mMap.addMarker(markerOutside)
-
-//        val markerInside = MarkerOptions().position(LatLng(-6.344941, 106.869003))
-//        mMap.addMarker(markerInside)
     }
 
     private fun checkForGeoFenceEntry(
